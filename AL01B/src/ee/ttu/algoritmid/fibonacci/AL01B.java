@@ -16,10 +16,10 @@ public class AL01B {
         double goldenRatio = 1.61803398875;
         recursiveF(baseTimeFibonacciNumber);
         double end = (double)(System.currentTimeMillis() - start) / baseTimeFibonacciNumber;
-        end *= 3 * n - 2;
-        BigDecimal result = BigDecimal.valueOf(end).divide(new BigDecimal("31536000000"), BigDecimal.ROUND_HALF_EVEN);
+        end *= Math.pow(goldenRatio, n);
+        BigDecimal millisToYears = BigDecimal.valueOf(end).divide(new BigDecimal("31536000000"), BigDecimal.ROUND_HALF_EVEN);
 
-        return result.toString();
+        return millisToYears.toString();
     }
 
     /**
