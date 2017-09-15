@@ -9,15 +9,15 @@ public class AL01A {
      */
     public String iterativeF(int n) {
         if (n < 1) return "";
-        int last = 1;
-        int current = 1;
-        int temp;
-        for (int i = 1; i < n; i++) {
+        long last = 1;
+        long current = 1;
+        long temp;
+        for (long i = 1; i < n; i++) {
             temp = current;
             current += last;
             last = temp;
         }
-        return Integer.toString(last);
+        return Long.toString(last);
     }
 
     public static void main(String[] args) {
