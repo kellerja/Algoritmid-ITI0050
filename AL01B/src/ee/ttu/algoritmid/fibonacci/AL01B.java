@@ -22,7 +22,7 @@ public class AL01B {
         end /= 60;
         end /= 24;
         end /= 365;
-        return Double.toString(end/1000);
+        return Double.toString(end/10000);
     }
 
     /**
