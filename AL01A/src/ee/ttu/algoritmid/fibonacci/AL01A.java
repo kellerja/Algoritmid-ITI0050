@@ -1,5 +1,7 @@
 package ee.ttu.algoritmid.fibonacci;
 
+import java.math.BigInteger;
+
 public class AL01A {
 
     /**
@@ -10,15 +12,15 @@ public class AL01A {
     public String iterativeF(int n) {
         if (n < 0) return "";
         else if (n == 0) return "0";
-        long last = 1;
-        long current = 1;
-        long temp;
+        BigInteger last = BigInteger.ONE;
+        BigInteger current = BigInteger.ONE;
+        BigInteger temp;
         for (long i = 1; i < n; i++) {
             temp = current;
-            current += last;
+            current = current.add(last);
             last = temp;
         }
-        return Long.toString(last);
+        return last.toString();
     }
 
     public static void main(String[] args) {
