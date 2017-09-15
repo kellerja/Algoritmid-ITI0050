@@ -10,12 +10,13 @@ public class AL01B {
      * @return The time estimate or exact time in YEARS.
      */
     public String timeToComputeRecursiveFibonacci(int n) {
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         final int baseTimeFibonacciNumber = 30;
         double goldenRatio = 1.61803398875;
         recursiveF(baseTimeFibonacciNumber);
-        double end = (double)(System.currentTimeMillis() - start) / baseTimeFibonacciNumber;
-        end = (1/Math.sqrt(5)) * Math.pow(goldenRatio, n+1);
+        double end = (double)(System.nanoTime() - start) / baseTimeFibonacciNumber;
+        end *= Math.pow(goldenRatio, n+1);
+        end /= 1000000;
         end /= 1000;
         end /= 60;
         end /= 60;
