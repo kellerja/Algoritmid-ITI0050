@@ -17,9 +17,12 @@ public class AL01B {
         recursiveF(baseTimeFibonacciNumber);
         double end = (double)(System.currentTimeMillis() - start) / baseTimeFibonacciNumber;
         end *= Math.pow(goldenRatio, n);
-        BigDecimal millisToYears = BigDecimal.valueOf(end).divide(new BigDecimal("31536000000"), BigDecimal.ROUND_HALF_EVEN);
-
-        return millisToYears.toString();
+        end /= 1000;
+        end /= 60;
+        end /= 60;
+        end /= 24;
+        end /= 365;
+        return Double.toString(end);
     }
 
     /**
