@@ -1,6 +1,5 @@
 package ee.ttu.algoritmid.fibonacci;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class AL01B {
@@ -16,7 +15,7 @@ public class AL01B {
         double goldenRatio = 1.61803398875;
         recursiveF(baseTimeFibonacciNumber);
         double end = (double)(System.currentTimeMillis() - start) / baseTimeFibonacciNumber;
-        end *= Math.pow(goldenRatio, n);
+        end = (1/Math.sqrt(5)) * Math.pow(goldenRatio, n+1);
         end /= 1000;
         end /= 60;
         end /= 60;
