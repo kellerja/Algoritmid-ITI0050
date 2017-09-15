@@ -15,14 +15,14 @@ public class AL01B {
         double goldenRatio = 1.61803398875;
         recursiveF(baseTimeFibonacciNumber);
         double end = (double)(System.nanoTime() - start) / baseTimeFibonacciNumber;
-        end *= Math.pow(goldenRatio, n+1);
+        end *= Math.pow(goldenRatio, n);
         end /= 1000000;
         end /= 1000;
         end /= 60;
         end /= 60;
         end /= 24;
         end /= 365;
-        return Double.toString(end/10000);
+        return Double.toString(end);
     }
 
     /**
