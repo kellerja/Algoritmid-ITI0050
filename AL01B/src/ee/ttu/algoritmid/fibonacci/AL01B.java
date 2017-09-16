@@ -10,19 +10,19 @@ public class AL01B {
      * @return The time estimate or exact time in YEARS.
      */
     public String timeToComputeRecursiveFibonacci(int n) {
-        long start = System.nanoTime();
         final int baseTimeFibonacciNumber = 30;
-        double goldenRatio = 1.61803398875;
+        final double goldenRatio = 1.61803398875;
+        long start = System.currentTimeMillis();
         recursiveF(baseTimeFibonacciNumber);
-        double end = (double)(System.nanoTime() - start) / baseTimeFibonacciNumber;
-        end *= Math.pow(goldenRatio, n);
-        end /= 1000000;
-        end /= 1000;
-        end /= 60;
-        end /= 60;
-        end /= 24;
-        end /= 365;
-        return Double.toString(end);
+        double deltaTime = (double)(System.currentTimeMillis() - start);
+        deltaTime *= 1 / Math.pow(goldenRatio, baseTimeFibonacciNumber);
+        deltaTime /= 1000;
+        deltaTime /= 60;
+        deltaTime /= 60;
+        deltaTime /= 24;
+        deltaTime /= 365;
+        deltaTime *= Math.pow(goldenRatio, n);
+        return Double.toString(deltaTime);
     }
 
     /**
