@@ -12,17 +12,17 @@ public class AL01B {
     public String timeToComputeRecursiveFibonacci(int n) {
         final int baseTimeFibonacciNumber = 30;
         final double goldenRatio = 1.61803398875;
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         recursiveF(baseTimeFibonacciNumber);
-        double deltaTime = (double)(System.currentTimeMillis() - start);
-        deltaTime *= 1 / Math.pow(goldenRatio, baseTimeFibonacciNumber);
-        deltaTime /= 1000;
-        deltaTime /= 60;
-        deltaTime /= 60;
-        deltaTime /= 24;
-        deltaTime /= 365;
-        deltaTime *= Math.pow(goldenRatio, n);
-        return Double.toString(deltaTime);
+        double deltaTime = (double)(System.nanoTime() - start);
+        double resultTime = deltaTime * Math.pow(goldenRatio, n-baseTimeFibonacciNumber);
+        resultTime /= 1_000_000;
+        resultTime /= 1000;
+        resultTime /= 60;
+        resultTime /= 60;
+        resultTime /= 24;
+        resultTime /= 365;
+        return Double.toString(resultTime);
     }
 
     /**
