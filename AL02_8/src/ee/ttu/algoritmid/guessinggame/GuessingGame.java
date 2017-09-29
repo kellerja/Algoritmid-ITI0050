@@ -1,5 +1,10 @@
 package ee.ttu.algoritmid.guessinggame;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 public class GuessingGame {
 
     Oracle oracle;
@@ -13,14 +18,23 @@ public class GuessingGame {
      * @return the name of the fruit.
      */
     public String play(Fruit[] fruitArray) {
-        for (int i = 0; i < fruitArray.length;i++) {
-            Fruit guess = fruitArray[i];
-            String result = oracle.isIt(guess);
-            if (result.equals("correct!")) {
-                return guess.getName();
+        Arrays.sort(fruitArray, Comparator.comparingInt(Fruit::getWeight));
+        int low = 0, high = fruitArray.length - 1;
+        int mid = (low+high)/2;
+        Fruit guess = fruitArray[mid];
+        String result = oracle.isIt(guess);
+        while (!result.equals("correct!")) {
+            if (result.equals("heavier")) {
+                low = mid - 1;
+            } else {
+                high = mid + 1;
             }
+            mid = (low+high)/2;
+            if (low > high) return guess.getName();
+            guess = fruitArray[mid];
+            result = oracle.isIt(guess);
         }
-        return "";
+        return guess.getName();
     }
 
     public static void main(String[] args) {
@@ -36,6 +50,7 @@ public class GuessingGame {
         };
         Oracle oracle = new Oracle(fruits[3]);
         GuessingGame guessingGame = new GuessingGame(oracle);
-        guessingGame.play(fruits);
+        System.out.println("Correct " + fruits[3].getName());
+        System.out.println("Guess " + guessingGame.play(fruits));
     }
 }
