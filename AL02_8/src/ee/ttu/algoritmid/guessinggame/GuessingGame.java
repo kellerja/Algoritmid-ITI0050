@@ -23,20 +23,15 @@ public class GuessingGame {
         int mid = (low+high)/2;
         Fruit guess = fruitArray[mid];
         String result = oracle.isIt(guess);
-        Fruit memory = guess;
         while (!result.equals("correct!")) {
             if (result.equals("heavier")) {
-                low = mid - 1;
+                low = mid + 1;
             } else {
-                high = mid + 1;
+                high = mid - 1;
             }
             mid = (low+high)/2;
             if (low > high) return guess.getName();
             guess = fruitArray[mid];
-            if (guess == memory) {
-                guess = fruitArray[result.equals("heavier") ? high : low];
-            }
-            memory = guess;
             result = oracle.isIt(guess);
         }
         return guess.getName();
@@ -53,7 +48,7 @@ public class GuessingGame {
                 new Fruit("Ploom", 15),
                 new Fruit("Virsik", 11)
         };
-        int selectedFruit = 3;
+        int selectedFruit = 6;
         Oracle oracle = new Oracle(fruits[selectedFruit]);
         GuessingGame guessingGame = new GuessingGame(oracle);
         System.out.println("Correct " + fruits[selectedFruit].getName());
