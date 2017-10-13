@@ -12,22 +12,20 @@ public class Queue {
     }
 
     public void enqueue(int number) {
+        while (!stack2.isEmpty()) {
+            stack1.push(stack2.pop());
+        }
         stack1.push(number);
     }
 
     public int dequeue() {
-        if (stack1.isEmpty()) return 0;
         while (!stack1.isEmpty()) {
             stack2.push(stack1.pop());
         }
-        int returnValue = stack2.pop();
-        while (!stack2.isEmpty()) {
-            stack1.push(stack2.pop());
-        }
-        return returnValue;
+        return stack2.pop();
     }
 
     public boolean isEmpty() {
-        return stack1.isEmpty();
+        return stack1.isEmpty() && stack2.isEmpty();
     }
 }
