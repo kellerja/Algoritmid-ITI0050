@@ -12,29 +12,27 @@ public class Deque {
     }
 
     public void pushFirst(int number) {
-        while (!stack2.isEmpty()) {
-            stack1.push(stack2.pop());
-        }
         stack1.push(number);
     }
 
     public void pushLast(int number) {
-        while (!stack1.isEmpty()) {
-            stack2.push(stack1.pop());
-        }
         stack2.push(number);
     }
 
     public int popFirst() {
-        while (!stack2.isEmpty()) {
-            stack1.push(stack2.pop());
+        if (stack1.isEmpty()) {
+            while (!stack2.isEmpty()) {
+                stack1.push(stack2.pop());
+            }
         }
         return stack1.pop();
     }
 
     public int popLast() {
-        while (!stack1.isEmpty()) {
-            stack2.push(stack1.pop());
+        if (stack2.isEmpty()) {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
         }
         return stack2.pop();
     }
