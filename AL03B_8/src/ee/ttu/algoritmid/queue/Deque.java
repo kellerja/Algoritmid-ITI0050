@@ -74,15 +74,4 @@ public class Deque {
         stack2 = temp;
     }
 
-    public static void main(String[] args) {
-        Deque deque = new Deque();
-        deque.pushFirst(3);
-        deque.pushFirst(8);
-        deque.pushLast(2);
-        deque.pushLast(9);
-        System.out.println(deque.popMin());
-        System.out.println(deque.stack1.size());
-        System.out.println(deque.stack2.size());
-    }
-
 }
