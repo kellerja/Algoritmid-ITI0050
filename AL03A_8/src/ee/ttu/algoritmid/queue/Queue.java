@@ -16,6 +16,7 @@ public class Queue {
     }
 
     public int dequeue() {
+        if (stack1.isEmpty()) return 0;
         while (!stack1.isEmpty()) {
             stack2.push(stack1.pop());
         }
