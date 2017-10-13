@@ -53,6 +53,11 @@ public class Deque {
             if (current < min) min = current;
             stack2.push(current);
         }
+        while (!stack1.isEmpty()) {
+            int current = stack1.pop();
+            if (current == min) continue;
+            stack2.push(current);
+        }
         return min;
     }
 
