@@ -54,13 +54,13 @@ public class Deque {
             stack2.push(current);
         }
         boolean popped = false;
-        while (!stack1.isEmpty()) {
-            int current = stack1.pop();
+        while (!stack2.isEmpty()) {
+            int current = stack2.pop();
             if (!popped && current == min) {
                 popped = true;
                 continue;
             }
-            stack2.push(current);
+            stack1.push(current);
         }
         return min;
     }
@@ -74,6 +74,17 @@ public class Deque {
         Stack temp = stack1;
         stack1 = stack2;
         stack2 = temp;
+    }
+
+    public static void main(String[] args) {
+        Deque deque = new Deque();
+        deque.pushFirst(3);
+        deque.pushFirst(8);
+        deque.pushLast(2);
+        deque.pushLast(9);
+        System.out.println(deque.popMin());
+        System.out.println(deque.stack1.size());
+        System.out.println(deque.stack2.size());
     }
 
 }
