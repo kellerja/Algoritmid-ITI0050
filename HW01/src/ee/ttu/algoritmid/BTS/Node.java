@@ -34,12 +34,12 @@ public class Node {
             bestResult = this;
         }
         int comparison = BinarySearchTree.compare(getData(), dancer);
-        if (comparison == 0) {
-            return bestResult;
-        } else if (comparison > 0) {
+        if (comparison > 0) {
             return leftChild == null ? bestResult : leftChild.search(dancer, bestResult);
-        } else {
+        } else if (comparison < 0) {
             return rightChild == null ? bestResult : rightChild.search(dancer, bestResult);
+        } else {
+            return bestResult;
         }
     }
 

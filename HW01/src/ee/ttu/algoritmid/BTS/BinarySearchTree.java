@@ -23,7 +23,7 @@ public class BinarySearchTree {
             first = b;
             second = a;
         }
-        return comp == 0 ? first.getGender().compareTo(second.getGender()) : comp;
+        return comp == 0 ? second.getGender().compareTo(first.getGender()) : comp;
     }
 
     public void insert(Dancer data) {
