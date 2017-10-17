@@ -2,6 +2,9 @@ package ee.ttu.algoritmid.BTS;
 
 import ee.ttu.algoritmid.dancers.Dancer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BinarySearchTree {
 
     private Node root;
@@ -150,6 +153,21 @@ public class BinarySearchTree {
             node.getParent().setRightChild(temp);
         }
         node.setParent(temp);
+    }
+
+    private void buildList(Node node, List<Dancer> list) {
+        if (node == null) {
+            return;
+        }
+        buildList(node.getLeftChild(), list);
+        list.add(node.getData());
+        buildList(node.getRightChild(), list);
+    }
+
+    public List<Dancer> toList() {
+        List<Dancer> treeAsList = new ArrayList<>();
+        buildList(getRoot(), treeAsList);
+        return treeAsList;
     }
 
     public void printTree() {

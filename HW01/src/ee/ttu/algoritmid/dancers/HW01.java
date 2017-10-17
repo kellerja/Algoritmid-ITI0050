@@ -16,6 +16,7 @@ public class HW01 implements Dancers {
 
     @Override
     public SimpleEntry<Dancer, Dancer> findPartnerFor(Dancer candidate) throws IllegalArgumentException {
+        if (candidate == null) throw new IllegalArgumentException("Dancer must not be null");
         Node node = binarySearchTree.search(candidate);
         if (node == null) {
             binarySearchTree.insert(candidate);
@@ -28,8 +29,7 @@ public class HW01 implements Dancers {
 
     @Override
     public List<Dancer> returnWaitingList() {
-        // TODO
-        return null;
+        return binarySearchTree.toList();
     }
 
     public static void main(String[] args) {
