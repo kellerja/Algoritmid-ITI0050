@@ -1,17 +1,17 @@
 package ee.ttu.algoritmid.BTS;
 
-import java.util.Comparator;
+import ee.ttu.algoritmid.dancers.Dancer;
 
-public class Node<T> {
+public class Node {
 
-    private T data;
-    private Node<T> leftChild;
-    private Node<T> rightChild;
-    private Node<T> parent;
+    private Dancer data;
+    private Node leftChild;
+    private Node rightChild;
+    private Node parent;
     private int leftHeight;
     private int rightHeight;
 
-    Node(T data, Node<T> parent) {
+    Node(Dancer data, Node parent) {
         this.data = data;
         this.parent = parent;
         this.leftChild = null;
@@ -20,39 +20,59 @@ public class Node<T> {
         this.rightHeight = 0;
     }
 
-    public T getData() {
+    public Dancer getData() {
         return data;
     }
 
-    Node search(T data, Comparator<T> comparator) {
-        int comparison = comparator.compare(getData(), data);
+    Node search(Dancer data) {
+        Node bestResult = isSuitable(data) ? this : null;
+        return search(data, bestResult);
+    }
+
+    private Node search(Dancer dancer, Node bestResult) {
+        if (isSuitable(dancer) && isBestResult(dancer, bestResult)) {
+            bestResult = this;
+        }
+        int comparison = BinarySearchTree.compare(getData(), dancer);
         if (comparison == 0) {
-            return this;
+            return bestResult;
         } else if (comparison > 0) {
-            return leftChild == null ? null : leftChild.search(data, comparator);
+            return leftChild == null ? bestResult : leftChild.search(dancer, bestResult);
         } else {
-            return rightChild == null ? null : rightChild.search(data, comparator);
+            return rightChild == null ? bestResult : rightChild.search(dancer, bestResult);
         }
     }
 
-    void setData(T data) {
+    private boolean isBestResult(Dancer dancer, Node currentBest) {
+        return currentBest == null ||
+                Math.abs(dancer.getHeight() - currentBest.getData().getHeight()) >=
+                        Math.abs(dancer.getHeight() - getData().getHeight());
+    }
+
+    private boolean isSuitable(Dancer dancer) {
+        return dancer.getGender() != getData().getGender() &&
+                (dancer.getGender().equals(Dancer.Gender.MALE) && dancer.getHeight() > getData().getHeight() ||
+                dancer.getGender().equals(Dancer.Gender.FEMALE) && dancer.getHeight() < getData().getHeight());
+    }
+
+    void setData(Dancer data) {
         this.data = data;
     }
 
-    Node<T> getParent() {
+    Node getParent() {
         return parent;
     }
 
-    void setParent(Node<T> parent) {
+    void setParent(Node parent) {
         this.parent = parent;
         updateParentHeight();
     }
 
-    Node<T> getRightChild() {
+    Node getRightChild() {
         return rightChild;
     }
 
-    void setRightChild(Node<T> rightChild) {
+    void setRightChild(Node rightChild) {
         this.rightChild = rightChild;
         setRightHeight(rightChild == null ? 0 : rightChild.getHeight());
     }
@@ -71,11 +91,11 @@ public class Node<T> {
         return 1 + Math.max(getLeftHeight(), getRightHeight());
     }
 
-    Node<T> getLeftChild() {
+    Node getLeftChild() {
         return leftChild;
     }
 
-    void setLeftChild(Node<T> leftChild) {
+    void setLeftChild(Node leftChild) {
         this.leftChild = leftChild;
         setLeftHeight(leftChild == null ? 0 : leftChild.getHeight());
     }

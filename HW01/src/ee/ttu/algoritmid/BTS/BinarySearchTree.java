@@ -1,77 +1,78 @@
 package ee.ttu.algoritmid.BTS;
 
-import java.util.Comparator;
+import ee.ttu.algoritmid.dancers.Dancer;
 
-public class BinarySearchTree<T> {
+public class BinarySearchTree {
 
-    private Node<T> root;
-    private Comparator<T> comparator;
+    private Node root;
 
-    public BinarySearchTree(Comparator<T> comparator) {
-        this.comparator = comparator;
+    public BinarySearchTree() {
         root = null;
     }
 
-    public void insert(T data) {
-        Node<T> parent = null;
-        Node<T> node = getRoot();
+    static int compare(Dancer a, Dancer b) {
+        return Integer.compare(a.getHeight(), b.getHeight());
+    }
+
+    public void insert(Dancer data) {
+        Node parent = null;
+        Node node = getRoot();
         while (node != null) {
             parent = node;
-            node = comparator.compare(data, node.getData()) < 0 ?
-                    node.getLeftChild() : node.getRightChild();
+            node = compare(data, node.getData()) < 0 ? node.getLeftChild() : node.getRightChild();
         }
-        Node<T> newNode = new Node<>(data, parent);
+        Node newNode = new Node(data, parent);
         if (parent == null) {
             setRoot(newNode);
-        } else if (comparator.compare(newNode.getData(), parent.getData()) < 0) {
+        } else if (compare(newNode.getData(), parent.getData()) < 0) {
             parent.setLeftChild(newNode);
         } else {
             parent.setRightChild(newNode);
         }
     }
 
-    public Node<T> delete(Node<T> nodeToRemove) {
-        Node<T> y = nodeToRemove.getLeftChild() == null || nodeToRemove.getRightChild() == null ?
+    public Node delete(Node nodeToRemove) {
+        Node y = nodeToRemove.getLeftChild() == null || nodeToRemove.getRightChild() == null ?
                 nodeToRemove : successor(nodeToRemove);
-        Node<T> x = y.getLeftChild() != null ? y.getLeftChild() : y.getRightChild();
+        Node x = y.getLeftChild() != null ? y.getLeftChild() : y.getRightChild();
         if (x != null) {
             x.setParent(y.getParent());
         }
         if (y.getParent() == null) {
             setRoot(x);
-        } else if (y.equals(y.getParent().getLeftChild())) {
+        } else if (y == y.getParent().getLeftChild()) {
             y.getParent().setLeftChild(x);
         } else {
             y.getParent().setRightChild(x);
         }
-        if (!nodeToRemove.equals(y)) {
+        if (!(nodeToRemove == y)) {
             nodeToRemove.setData(y.getData());
         }
         return y;
     }
 
-    public Node<T> search(T data) {
-        return root == null ? null : getRoot().search(data, comparator);
+    public Node search(Dancer data) {
+        return getRoot() == null ? null : getRoot().search(data);
     }
 
-    Node<T> predecessor(Node<T> node) {
+    Node predecessor(Node node) {
         return null;
     }
 
-    Node<T> successor(Node<T> node) {
+    Node successor(Node node) {
         if (node.getRightChild() != null) {
-            return minimum(node);
+            return minimum(node.getRightChild());
         }
-        Node<T> parent = node.getParent();
+        Node parent = node.getParent();
         while (parent != null &&
-                comparator.compare(node.getData(), parent.getRightChild().getData()) == 0) {
+                compare(node.getData(), parent.getRightChild().getData()) == 0) {
             node = parent;
             parent = parent.getParent();
         }
         return parent;
     }
 
-    public Node<T> minimum(Node<T> node) {
+    public Node minimum(Node node) {
         if (node == null) return null;
         while (node.getLeftChild() != null) {
             node = node.getLeftChild();
@@ -79,7 +80,7 @@ public class BinarySearchTree<T> {
         return node;
     }
 
-    public Node<T> maximum(Node<T> node) {
+    public Node maximum(Node node) {
         if (node == null) return null;
         while (node.getRightChild() != null) {
             node = node.getRightChild();
@@ -99,24 +100,24 @@ public class BinarySearchTree<T> {
         return rightTreeHeight - leftTreeHeight;
     }
 
-    public Node<T> getRoot() {
+    public Node getRoot() {
         return root;
     }
 
-    private void setRoot(Node<T> root) {
+    private void setRoot(Node root) {
         this.root = root;
     }
 
     private void rotateLeft() {
-        Node<T> temp = getRoot().getLeftChild();
+        Node temp = getRoot().getLeftChild();
         temp.setParent(null);
         getRoot().setLeftChild(getRoot().getLeftChild().getRightChild());
         temp.setRightChild(getRoot());
         setRoot(temp);
     }
 
-    private void rotateLeft(Node<T> node) {
-        Node<T> temp = node.getLeftChild();
+    private void rotateLeft(Node node) {
+        Node temp = node.getLeftChild();
         temp.setParent(null);
         node.setLeftChild(node.getLeftChild().getRightChild());
         temp.setRightChild(node);
@@ -130,15 +131,15 @@ public class BinarySearchTree<T> {
     }
 
     private void rotateRight() {
-        Node<T> temp = getRoot().getRightChild();
+        Node temp = getRoot().getRightChild();
         temp.setParent(null);
         getRoot().setRightChild(getRoot().getRightChild().getLeftChild());
         temp.setLeftChild(getRoot());
         setRoot(temp);
     }
 
-    private void rotateRight(Node<T> node) {
-        Node<T> temp = node.getRightChild();
+    private void rotateRight(Node node) {
+        Node temp = node.getRightChild();
         temp.setParent(null);
         node.setRightChild(node.getRightChild().getLeftChild());
         temp.setLeftChild(node);
@@ -153,25 +154,5 @@ public class BinarySearchTree<T> {
 
     public void printTree() {
         BTreePrinter.printNode(getRoot());
-    }
-
-    public static void main(String[] args) {
-        BinarySearchTree<Integer> bts = new BinarySearchTree<>(Integer::compareTo);
-        bts.insert(6);
-        bts.insert(2);
-        bts.insert(3);
-        bts.insert(1);
-        bts.insert(7);
-
-        bts.printTree();
-        System.out.println("height " + bts.height());
-        System.out.println("balance " + bts.balance());
-        System.out.println();
-
-        bts.rotateLeft(bts.search(2));
-        bts.printTree();
-        System.out.println("height " + bts.height());
-        System.out.println("balance " + bts.balance());
-        System.out.println();
     }
 }
