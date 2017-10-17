@@ -68,7 +68,10 @@ public class HW01 implements Dancers {
         //hw01.binarySearchTree.printTree();
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(15, Dancer.Gender.MALE, 111));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
-        //hw01.binarySearchTree.printTree();
+
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(16, Dancer.Gender.MALE, 10));
+        hw01.binarySearchTree.printTree();
+        hw01.returnWaitingList().forEach(d -> System.out.println("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ")"));
     }
 
     private static Dancer newDancer(int id, Dancer.Gender gender, int height) {

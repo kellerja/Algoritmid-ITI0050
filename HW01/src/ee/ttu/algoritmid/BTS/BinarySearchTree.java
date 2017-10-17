@@ -14,7 +14,16 @@ public class BinarySearchTree {
     }
 
     static int compare(Dancer a, Dancer b) {
-        return Integer.compare(a.getHeight(), b.getHeight());
+        int comp = Integer.compare(a.getHeight(), b.getHeight());
+        Dancer first, second;
+        if (a.getGender() == Dancer.Gender.FEMALE) {
+            first = a;
+            second = b;
+        } else {
+            first = b;
+            second = a;
+        }
+        return comp == 0 ? first.getGender().compareTo(second.getGender()) : comp;
     }
 
     public void insert(Dancer data) {
