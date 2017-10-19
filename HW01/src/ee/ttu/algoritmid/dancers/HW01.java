@@ -1,24 +1,46 @@
 package ee.ttu.algoritmid.dancers;
 
-import ee.ttu.algoritmid.BTS.BinarySearchTree;
-import ee.ttu.algoritmid.BTS.Node;
+import ee.ttu.algoritmid.BTS2.BalancedBinarySearchTree;
+import ee.ttu.algoritmid.BTS2.Node;
+import ee.ttu.algoritmid.BTS2.TreePrinter;
 
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 public class HW01 implements Dancers {
 
-    private final BinarySearchTree binarySearchTree;
+    private final BalancedBinarySearchTree<Dancer> binarySearchTree;
 
     public HW01() {
-        binarySearchTree = new BinarySearchTree();
+        binarySearchTree = new BalancedBinarySearchTree<>((dancer1, dancer2) -> {
+            int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
+            Dancer first, second;
+            if (dancer1.getGender() == Dancer.Gender.FEMALE) {
+                first = dancer1;
+                second = dancer2;
+            } else {
+                first = dancer1;
+                second = dancer2;
+            }
+            return comp == 0 ? first.getGender().compareTo(second.getGender()) : comp;
+        }, node -> "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
     }
 
     @Override
     public SimpleEntry<Dancer, Dancer> findPartnerFor(Dancer candidate) throws IllegalArgumentException {
         if (candidate == null) throw new IllegalArgumentException("Dancer must not be null");
-        Node node = binarySearchTree.search(candidate);
+        Node<Dancer> node = binarySearchTree.search(candidate,
+                (search, best, current) -> {
+                        //if (best != null && search.getID() == best.getID()) return false;
+                        //if (search.getID() == current.getID()) return true;
+                        if (search.getGender() != current.getGender()
+                                && (search.getGender().equals(Dancer.Gender.MALE) && search.getHeight() > current.getHeight()
+                                || search.getGender().equals(Dancer.Gender.FEMALE) && search.getHeight() < current.getHeight())) {
+                            if (best == null
+                                    || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) return true;
+                        }
+                        return false;
+        });
         if (node == null) {
             binarySearchTree.insert(candidate);
             return null;
@@ -40,13 +62,60 @@ public class HW01 implements Dancers {
     }
 
     public static void main(String[] args) {
-        HW01 hw01 = new HW01();
-        //femaleTestData(hw01);
-        maleTestData(hw01);
-        //hw01.returnWaitingList().forEach(d -> System.out.println("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ")"));
+        System.out.println();
+        femaleTestData(new HW01());
+        System.out.println();
+        maleTestData(new HW01());
+        System.out.println();
+        testBalanceAllLeft(new HW01());
+        System.out.println();
+        testBalanceAllRight(new HW01());
+        System.out.println();
+        testBalanceRandom1(new HW01());
+    }
+
+    private static void testBalanceRandom1(HW01 hw01) {
+        System.out.println("testBalanceRandom1");
+        SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
+        int id = 1;
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 10));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 40));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 30));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 20));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 50));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 5));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 1));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 3));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 4));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 9));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 9));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 12));
+    }
+
+    private static void testBalanceAllLeft(HW01 hw01) {
+        System.out.println("testBalanceAllLeft");
+        SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(1, Dancer.Gender.MALE, 50));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(2, Dancer.Gender.MALE, 40));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(3, Dancer.Gender.MALE, 30));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(4, Dancer.Gender.MALE, 20));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(5, Dancer.Gender.MALE, 10));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(6, Dancer.Gender.MALE, 5));
+    }
+
+    private static void testBalanceAllRight(HW01 hw01) {
+        System.out.println("testBalanceAllRight");
+        SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(1, Dancer.Gender.MALE, 5));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(2, Dancer.Gender.MALE, 10));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(3, Dancer.Gender.MALE, 20));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(4, Dancer.Gender.MALE, 30));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(5, Dancer.Gender.MALE, 40));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(6, Dancer.Gender.MALE, 50));
     }
 
     private static void maleTestData(HW01 hw01) {
+        System.out.println("maleTestData");
         SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(80, Dancer.Gender.MALE, 80));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(120, Dancer.Gender.MALE, 120));
@@ -68,13 +137,11 @@ public class HW01 implements Dancers {
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(171, Dancer.Gender.MALE, 171));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(172, Dancer.Gender.MALE, 172));
 
-        hw01.binarySearchTree.printTree();
-
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(170, Dancer.Gender.FEMALE, 170));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
-        if (1+1 == 2) return;
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(171, Dancer.Gender.FEMALE, 171));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
+        TreePrinter.printTree(hw01.binarySearchTree);
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(180, Dancer.Gender.FEMALE, 180));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
 
@@ -90,6 +157,7 @@ public class HW01 implements Dancers {
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(51, Dancer.Gender.MALE, 51));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(111, Dancer.Gender.MALE, 111));
 
+        System.out.println();
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(139, Dancer.Gender.FEMALE, 139));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(119, Dancer.Gender.FEMALE, 119));
@@ -105,6 +173,7 @@ public class HW01 implements Dancers {
     }
 
     private static void femaleTestData(HW01 hw01) {
+        System.out.println("femaleTestData");
     /*
     hw01.findPartnerFor(newDancer(1, Dancer.Gender.MALE, 10));
     hw01.findPartnerFor(newDancer(2, Dancer.Gender.MALE, 20));
@@ -129,19 +198,13 @@ public class HW01 implements Dancers {
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(11, Dancer.Gender.FEMALE, 50));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(12, Dancer.Gender.FEMALE, 10));
 
-        //hw01.binarySearchTree.printTree();
-
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(13, Dancer.Gender.MALE, 81));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getKey().getHeight());
-        //hw01.binarySearchTree.printTree();
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(14, Dancer.Gender.MALE, 51));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getKey().getHeight());
-        //hw01.binarySearchTree.printTree();
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(15, Dancer.Gender.MALE, 111));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getKey().getHeight());
-
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(16, Dancer.Gender.MALE, 10));
-        hw01.binarySearchTree.printTree();
     }
 
     private static Dancer newDancer(int id, Dancer.Gender gender, int height) {

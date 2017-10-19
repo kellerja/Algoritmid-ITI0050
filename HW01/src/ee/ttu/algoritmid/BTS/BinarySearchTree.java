@@ -33,13 +33,27 @@ public class BinarySearchTree {
             parent = node;
             node = compare(data, node.getData()) < 0 ? node.getLeftChild() : node.getRightChild();
         }
-        Node newNode = new Node(data, parent);
+        Node newNode = new Node(data, parent, this);
+        newNode.setParent(parent);
         if (parent == null) {
             setRoot(newNode);
         } else if (compare(newNode.getData(), parent.getData()) < 0) {
+            System.out.println("LEFT " + parent.getData().getID() + " " + newNode.getData().getID());
             parent.setLeftChild(newNode);
         } else {
+            System.out.println("RIGHT " + parent.getData().getID() + " " + newNode.getData().getID());
             parent.setRightChild(newNode);
+        }
+        fixBalance(getRoot());
+    }
+
+    private void fixBalance(Node root) {
+        if (root == null) return;
+        fixBalance(root.getRightChild());
+        fixBalance(root.getLeftChild());
+        if (Math.abs(root.getBalance()) <= 1) return;
+        if (root.getBalance() == 2 || root.getBalance() == -2) {
+            root.balance();
         }
     }
 
@@ -60,6 +74,7 @@ public class BinarySearchTree {
         if (!(nodeToRemove == y)) {
             nodeToRemove.setData(y.getData());
         }
+        fixBalance(getRoot());
         return y;
     }
 
@@ -100,18 +115,6 @@ public class BinarySearchTree {
         return node;
     }
 
-    int height() {
-        if (getRoot() == null) return 0;
-        return getRoot().getHeight();
-    }
-
-    int balance() {
-        if (getRoot() == null) return 0;
-        int rightTreeHeight = getRoot().getRightChild() == null ? 0 : getRoot().getRightChild().getHeight();
-        int leftTreeHeight = getRoot().getLeftChild() == null ? 0 : getRoot().getLeftChild().getHeight();
-        return rightTreeHeight - leftTreeHeight;
-    }
-
     public Node getRoot() {
         return root;
     }
@@ -120,18 +123,25 @@ public class BinarySearchTree {
         this.root = root;
     }
 
-    private void rotateLeft() {
+    public void rotateRight() {
         Node temp = getRoot().getLeftChild();
         temp.setParent(null);
-        getRoot().setLeftChild(getRoot().getLeftChild().getRightChild());
+        getRoot().setLeftChild(temp.getRightChild());
+        if (getRoot().getLeftChild() != null) getRoot().getLeftChild().setParent(getRoot());
         temp.setRightChild(getRoot());
+        getRoot().setParent(temp);
         setRoot(temp);
     }
 
-    private void rotateLeft(Node node) {
+    public void rotateRight(Node node) {
+        if (node == getRoot()) {
+            rotateRight();
+            return;
+        }
         Node temp = node.getLeftChild();
         temp.setParent(null);
         node.setLeftChild(node.getLeftChild().getRightChild());
+        if (getRoot().getLeftChild() != null) getRoot().getLeftChild().setParent(getRoot());
         temp.setRightChild(node);
         temp.setParent(node.getParent());
         if (node.getParent().getLeftChild() == node) {
@@ -142,18 +152,25 @@ public class BinarySearchTree {
         node.setParent(temp);
     }
 
-    private void rotateRight() {
+    public void rotateLeft() {
         Node temp = getRoot().getRightChild();
         temp.setParent(null);
         getRoot().setRightChild(getRoot().getRightChild().getLeftChild());
+        if (getRoot().getRightChild() != null) getRoot().getRightChild().setParent(getRoot());
         temp.setLeftChild(getRoot());
+        getRoot().setParent(temp);
         setRoot(temp);
     }
 
-    private void rotateRight(Node node) {
+    public void rotateLeft(Node node) {
+        if (node == getRoot()) {
+            rotateLeft();
+            return;
+        }
         Node temp = node.getRightChild();
         temp.setParent(null);
         node.setRightChild(node.getRightChild().getLeftChild());
+        if (getRoot().getRightChild() != null) getRoot().getRightChild().setParent(getRoot());
         temp.setLeftChild(node);
         temp.setParent(node.getParent());
         if (node.getParent().getLeftChild() == node) {

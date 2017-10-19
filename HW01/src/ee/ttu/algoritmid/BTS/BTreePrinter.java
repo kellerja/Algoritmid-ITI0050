@@ -6,9 +6,9 @@ import java.util.List;
 class BTreePrinter {
 
     public static void printNode(Node root) {
-        int height = root.getHeight() - 1;
+        int height = root.getHeight();
         List<List<Node>> tree = new ArrayList<>();
-        for (int i = 0; i <= height; i++) {
+        for (int i = 0; i < height; i++) {
             tree.add(new ArrayList<>());
         }
         getTree(root, tree, 0, null);
@@ -19,7 +19,8 @@ class BTreePrinter {
             }
             System.out.print(" SIZE " + layer.size());
             System.out.println();
-        }*/
+        }
+        */
         List<List<String>> treeString = new ArrayList<>();
         for (int i = 0; i < tree.size(); i++) {
             List<Node> layer = tree.get(i);
@@ -27,10 +28,11 @@ class BTreePrinter {
             for (int j = 0; j < layer.size(); j++) {
                 Node node = layer.get(j);
                 if (node == null) {
-                    layerStringList.add(getNumOfSpaces(treeString, i, j, layerStringList, "(null null null):null") + "(null null null):null");
+                    String nullValue = "(null null null):null";
+                    layerStringList.add(getNumOfSpaces(treeString, i, j, layerStringList, nullValue) + nullValue);
                     continue;
                 }
-                String current = "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getHeight();
+                String current = "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getHeight() + ":" + node.getBalance();
                 layerStringList.add(getNumOfSpaces(treeString, i, j, layerStringList, current) + current);
             }
             treeString.add(layerStringList);

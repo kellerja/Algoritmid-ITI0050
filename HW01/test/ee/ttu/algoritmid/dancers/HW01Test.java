@@ -5,7 +5,6 @@ import org.junit.Test;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ee.ttu.algoritmid.dancers.Dancer.Gender.FEMALE;
 import static ee.ttu.algoritmid.dancers.Dancer.Gender.MALE;
@@ -111,7 +110,7 @@ public class HW01Test {
         if (!result2) fail("Remaining dancer IDs are not correct.");
     }
 
-    private Dancer createDancer(int id, Dancer.Gender gender, int height) {
+    Dancer createDancer(int id, Dancer.Gender gender, int height) {
         return new Dancer() {
             @Override
             public int getID() {
