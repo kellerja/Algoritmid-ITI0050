@@ -45,24 +45,20 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
 
     @Override
     public void delete(Node<T> node) {
-        try {
-            Node<T> y = node.getLeftChild() == null || node.getRightChild() == null ? node : successor(node);
-            Node<T> x = y.getLeftChild() != null ? y.getLeftChild() : y.getRightChild();
-            if (x != null) x.setParent(y.getParent());
-            if (node != y) {
-                node.setData(y.getData());
-            }
-            if (y.getParent() == null) {
-                setRoot(x);
-            } else if (y == y.getParent().getLeftChild()) {
-                y.getParent().setLeftChild(x);
-                y.getParent().setSubtreeHeightAndUpdateParentHeight(true, x == null ? 0 : x.getHeight(), this);
-            } else {
-                y.getParent().setRightChild(x);
-                y.getParent().setSubtreeHeightAndUpdateParentHeight(false, x == null ? 0 : x.getHeight(), this);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Node<T> y = node.getLeftChild() == null || node.getRightChild() == null ? node : successor(node);
+        Node<T> x = y.getLeftChild() != null ? y.getLeftChild() : y.getRightChild();
+        if (x != null) x.setParent(y.getParent());
+        if (node != y) {
+            node.setData(y.getData());
+        }
+        if (y.getParent() == null) {
+            setRoot(x);
+        } else if (y == y.getParent().getLeftChild()) {
+            y.getParent().setLeftChild(x);
+            y.getParent().setSubtreeHeightAndUpdateParentHeight(true, x == null ? 0 : x.getHeight(), this);
+        } else {
+            y.getParent().setRightChild(x);
+            y.getParent().setSubtreeHeightAndUpdateParentHeight(false, x == null ? 0 : x.getHeight(), this);
         }
     }
 
@@ -104,7 +100,7 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
         buildList(node.getRightChild(), treeAsList);
     }
 
-    void rotateLeft(Node<T> node) throws Exception {
+    void rotateLeft(Node<T> node) {
         Node<T> temp = node.getRightChild();
         node.setRightChild(temp.getLeftChild());
         if (temp.getLeftChild() != null) temp.getLeftChild().setParent(node);
@@ -122,10 +118,9 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
             }
         }
         node.setParent(temp);
-        //node.setSubtreeHeightAndUpdateParentHeight(false, node.getRightChild() == null ? 0 : node.getRightChild().getHeight(), this);
     }
 
-    void rotateRight(Node<T> node) throws Exception {
+    void rotateRight(Node<T> node) {
         Node<T> temp = node.getLeftChild();
         node.setLeftChild(temp.getRightChild());
         if (temp.getRightChild() != null) temp.getRightChild().setParent(node);
@@ -141,7 +136,6 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
             }
         }
         node.setParent(temp);
-        //node.setSubtreeHeightAndUpdateParentHeight(true, node.getLeftChild() == null ? 0 : node.getLeftChild().getHeight(), this);
     }
 
     public static void main(String[] args) {

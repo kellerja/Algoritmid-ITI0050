@@ -65,7 +65,7 @@ public class Node<T> {
         this.leftSubtreeHeight = leftSubtreeHeight;
     }
 
-    void insert(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) throws Exception {
+    void insert(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) {
         int compareResult = comparator.compare(node.getData(), getData());
         if (compareResult < 0) {
             insertToLeftSubtree(node, comparator, binarySearchTree);
@@ -78,7 +78,7 @@ public class Node<T> {
         return getRightSubtreeHeight() - getLeftSubtreeHeight();
     }
 
-    private void balance(BalancedBinarySearchTree<T> binarySearchTree) throws Exception {
+    private void balance(BalancedBinarySearchTree<T> binarySearchTree) {
         if (getBalance() == -2 && getLeftChild().getBalance() == -1) {
             binarySearchTree.rotateRight(this);
             setSubtreeHeightAndUpdateParentHeight(true, getLeftChild() == null ? 0 : getLeftChild().getHeight(), binarySearchTree);
@@ -96,11 +96,11 @@ public class Node<T> {
             setSubtreeHeightAndUpdateParentHeight(false, getRightChild() == null ? 0 : getRightChild().getHeight(), binarySearchTree);
         } else if (getBalance() == 2 && getRightChild().getBalance() == 1) {
             binarySearchTree.rotateLeft(this);
-            setSubtreeHeightAndUpdateParentHeight(false, getLeftChild() == null ? 0 : getLeftChild().getHeight(), binarySearchTree);
+            setSubtreeHeightAndUpdateParentHeight(false, getRightChild() == null ? 0 : getRightChild().getHeight(), binarySearchTree);
         }
     }
 
-    private void insertToRightSubtree(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) throws Exception {
+    private void insertToRightSubtree(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) {
         if (getRightChild() == null) {
             node.setParent(this);
             setRightChild(node);
@@ -110,8 +110,7 @@ public class Node<T> {
         }
     }
 
-    void setSubtreeHeightAndUpdateParentHeight(boolean leftSubtree, int amount, BalancedBinarySearchTree<T> binarySearchTree) throws Exception {
-        int tempHeight = getHeight();
+    void setSubtreeHeightAndUpdateParentHeight(boolean leftSubtree, int amount, BalancedBinarySearchTree<T> binarySearchTree) {
         if (leftSubtree) {
             setLeftSubtreeHeight(amount);
         } else {
@@ -121,18 +120,16 @@ public class Node<T> {
             balance(binarySearchTree);
             return;
         }
-        if (getHeight() != tempHeight && getParent() != null) {
-            if (getParent().getRightChild() == this) {
+        if (getParent() != null) {
+            if (getParent().getRightChild() == this && getParent().getRightSubtreeHeight() != getHeight()) {
                 getParent().setSubtreeHeightAndUpdateParentHeight(false, getHeight(), binarySearchTree);
-            } else if (getParent().getLeftChild() == this) {
+            } else if (getParent().getLeftChild() == this && getParent().getLeftSubtreeHeight() != getHeight()) {
                 getParent().setSubtreeHeightAndUpdateParentHeight(true, getHeight(), binarySearchTree);
-            } else {
-                throw new Exception("Parent " + getParent() + " and child " + this + " are connected inconsistently");
             }
         }
     }
 
-    private void insertToLeftSubtree(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) throws Exception {
+    private void insertToLeftSubtree(Node<T> node, Comparator<T> comparator, BalancedBinarySearchTree<T> binarySearchTree) {
         if (getLeftChild() == null) {
             node.setParent(this);
             setLeftChild(node);
