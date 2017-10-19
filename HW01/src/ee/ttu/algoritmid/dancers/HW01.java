@@ -2,7 +2,6 @@ package ee.ttu.algoritmid.dancers;
 
 import ee.ttu.algoritmid.BTS2.BalancedBinarySearchTree;
 import ee.ttu.algoritmid.BTS2.Node;
-import ee.ttu.algoritmid.BTS2.TreePrinter;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
@@ -141,7 +140,6 @@ public class HW01 implements Dancers {
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(171, Dancer.Gender.FEMALE, 171));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
-        TreePrinter.printTree(hw01.binarySearchTree);
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(180, Dancer.Gender.FEMALE, 180));
         System.out.println("PARTNER " + dancerDancerSimpleEntry.getValue().getHeight());
 
