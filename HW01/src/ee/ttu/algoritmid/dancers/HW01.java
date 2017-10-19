@@ -18,10 +18,10 @@ public class HW01 implements Dancers {
                 first = dancer1;
                 second = dancer2;
             } else {
-                first = dancer1;
-                second = dancer2;
+                first = dancer2;
+                second = dancer1;
             }
-            return comp == 0 ? first.getGender().compareTo(second.getGender()) : comp;
+            return comp == 0 ? second.getGender().compareTo(first.getGender()) : comp;
         }, node -> "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
     }
 
