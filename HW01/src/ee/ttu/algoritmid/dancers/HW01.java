@@ -86,7 +86,7 @@ public class HW01 implements Dancers {
         BalancedBinarySearchTree<Dancer> mem = null;
         Dancer generated = null;
         try {
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < 1000000; i++) {
                 mem = hw01.binarySearchTree;
                 if (random.nextBoolean()) {
                     generated = newDancer(id++, Dancer.Gender.FEMALE, random.nextInt(200));
