@@ -35,11 +35,7 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
         if (root == null) {
             setRoot(new Node<>(data));
         } else {
-            try {
-                root.insert(new Node<>(data), getComparator(), this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            root.insert(new Node<>(data), getComparator(), this);
         }
     }
 

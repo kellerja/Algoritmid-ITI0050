@@ -85,14 +85,22 @@ public class Node<T> {
         } else if (getBalance() == -2 && getLeftChild().getBalance() == 1) {
             binarySearchTree.rotateLeft(getLeftChild());
             binarySearchTree.rotateRight(this);
-            setSubtreeHeightAndUpdateParentHeight(true, getLeftChild() == null ? 0 : getLeftChild().getHeight(), binarySearchTree);
-            if (getParent().getLeftChild() != null) getParent().getLeftChild().setSubtreeHeightAndUpdateParentHeight(false, getParent().getLeftChild().getRightChild() == null ? 0 : getParent().getLeftChild().getRightChild().getHeight(), binarySearchTree);
+            if (getParent().getLeftChild() != null) {
+                getParent().getLeftChild()
+                        .setRightSubtreeHeight(getParent().getLeftChild()
+                                .getRightChild() == null ? 0 : getParent().getLeftChild().getRightChild().getHeight());
+                getParent().setLeftSubtreeHeight(getParent().getLeftChild() == null ? 0 : getParent().getLeftChild().getHeight());
+            }
             setSubtreeHeightAndUpdateParentHeight(true, getLeftChild() == null ? 0 : getLeftChild().getHeight(), binarySearchTree);
         } else if (getBalance() == 2 && getRightChild().getBalance() == -1) {
             binarySearchTree.rotateRight(getRightChild());
             binarySearchTree.rotateLeft(this);
-            setSubtreeHeightAndUpdateParentHeight(false, getLeftChild() == null ? 0 : getLeftChild().getHeight(), binarySearchTree);
-            if (getParent().getRightChild() != null) getParent().getRightChild().setSubtreeHeightAndUpdateParentHeight(true, getParent().getRightChild().getLeftChild() == null ? 0 : getParent().getRightChild().getLeftChild().getHeight(), binarySearchTree);
+            if (getParent().getRightChild() != null) {
+                getParent().getRightChild()
+                        .setLeftSubtreeHeight(getParent().getRightChild()
+                                .getLeftChild() == null ? 0 : getParent().getRightChild().getLeftChild().getHeight());
+                getParent().setRightSubtreeHeight(getParent().getRightChild() == null ? 0 : getParent().getRightChild().getHeight());
+            }
             setSubtreeHeightAndUpdateParentHeight(false, getRightChild() == null ? 0 : getRightChild().getHeight(), binarySearchTree);
         } else if (getBalance() == 2 && getRightChild().getBalance() == 1) {
             binarySearchTree.rotateLeft(this);
@@ -104,7 +112,7 @@ public class Node<T> {
         if (getRightChild() == null) {
             node.setParent(this);
             setRightChild(node);
-            setSubtreeHeightAndUpdateParentHeight(false, getRightSubtreeHeight() + 1, binarySearchTree);
+            setSubtreeHeightAndUpdateParentHeight(false, node.getHeight(), binarySearchTree);
         } else {
             getRightChild().insert(node, comparator, binarySearchTree);
         }
@@ -133,7 +141,7 @@ public class Node<T> {
         if (getLeftChild() == null) {
             node.setParent(this);
             setLeftChild(node);
-            setSubtreeHeightAndUpdateParentHeight(true, getLeftSubtreeHeight() + 1, binarySearchTree);
+            setSubtreeHeightAndUpdateParentHeight(true, node.getHeight(), binarySearchTree);
         } else {
             getLeftChild().insert(node, comparator, binarySearchTree);
         }
