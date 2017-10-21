@@ -58,64 +58,6 @@ public class BalancedBinarySearchTree<T>{
         }
     }
 
-    public Node<T> nextNode(Node<T> node) {
-        if (node == null) return null;
-        Node<T> parent = node.getParent();
-        if (parent != null && parent.getLeftChild() == node && comparator.compare(node.getData(), parent.getData()) == 0) return parent;
-        return successor(node);
-    }
-
-    public static void main(String[] args) {
-        BalancedBinarySearchTree<Dancer> binarySearchTree = new BalancedBinarySearchTree<>(Comparator.comparingInt(Dancer::getHeight), s -> s.getData().getID() + ":" + s.getData().getHeight());
-        binarySearchTree.insert(newDancer(1, 15));
-        binarySearchTree.insert(newDancer(2, 6));
-        binarySearchTree.insert(newDancer(3, 18));
-        binarySearchTree.insert(newDancer(4, 17));
-        binarySearchTree.insert(newDancer(5, 6));
-        binarySearchTree.insert(newDancer(6, 5));
-        binarySearchTree.insert(newDancer(7, 19));
-        binarySearchTree.insert(newDancer(8, 7));
-        binarySearchTree.insert(newDancer(9, 4));
-        binarySearchTree.insert(newDancer(10, 20));
-        binarySearchTree.insert(newDancer(11, 18));
-        binarySearchTree.insert(newDancer(12, 18));
-        binarySearchTree.insert(newDancer(13, 18));
-        binarySearchTree.insert(newDancer(14, 6));
-        binarySearchTree.insert(newDancer(15, 7));
-        TreePrinter.printTree(binarySearchTree);
-        Node<Dancer> result = binarySearchTree.search(newDancer(76, 6), (search, best, current) -> best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight()));
-        System.out.println(binarySearchTree.getToStringFunction().apply(result));
-        Node<Dancer> temp = binarySearchTree.nextNode(result);
-        System.out.println(binarySearchTree.getToStringFunction().apply(temp));
-        temp = binarySearchTree.nextNode(temp);
-        System.out.println(binarySearchTree.getToStringFunction().apply(temp));
-        temp = binarySearchTree.nextNode(temp);
-        System.out.println(binarySearchTree.getToStringFunction().apply(temp));
-        temp = binarySearchTree.nextNode(temp);
-        System.out.println(binarySearchTree.getToStringFunction().apply(temp));
-        temp = binarySearchTree.nextNode(temp);
-        System.out.println(binarySearchTree.getToStringFunction().apply(temp));
-    }
-
-    private static Dancer newDancer(int id, int height) {
-        return new Dancer() {
-            @Override
-            public int getID() {
-                return id;
-            }
-
-            @Override
-            public Gender getGender() {
-                return Gender.MALE;
-            }
-
-            @Override
-            public int getHeight() {
-                return height;
-            }
-        };
-    }
-
     public Node<T> successor(Node<T> node) {
         if (node == null) return null;
         if (node.getRightChild() != null) return minimum(node.getRightChild());
