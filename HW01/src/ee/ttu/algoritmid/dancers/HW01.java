@@ -103,4 +103,12 @@ public class HW01 implements Dancers {
         buildList(maleSearchTree.minimum(maleSearchTree.getRoot()), femaleSearchTree.minimum(femaleSearchTree.getRoot()), dancers);
         return dancers;
     }
+
+    public BalancedBinarySearchTree<Dancer> getMaleSearchTree() {
+        return maleSearchTree;
+    }
+
+    public BalancedBinarySearchTree<Dancer> getFemaleSearchTree() {
+        return femaleSearchTree;
+    }
 }
