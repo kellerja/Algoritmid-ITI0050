@@ -1,5 +1,6 @@
 package ee.ttu.algoritmid.dancers;
 
+import ee.ttu.algoritmid.BTS2.TreePrinter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,14 +61,23 @@ public class TestHW01 {
             if (result != null) {
                 if (dancer.getGender() == FEMALE) {
                     if (tallestClosest != null) {
+                        System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")->(" + tallestClosest.getID() + " " + tallestClosest.getGender() + " " + tallestClosest.getHeight() + ")=(" + result.getValue().getID() + " " + result.getValue().getGender() + " " + result.getValue().getHeight() + ")");
                         assertEquals(tallestClosest.getHeight(), result.getValue().getHeight());
                     }
                 } else {
                     if (smallestClosest != null) {
+                        System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")->(" + smallestClosest.getID() + " " + smallestClosest.getGender() + " " + smallestClosest.getHeight() + ")=(" + result.getKey().getID() + " " + result.getKey().getGender() + " " + result.getKey().getHeight() + ")");
                         assertEquals(smallestClosest.getHeight(), result.getKey().getHeight());
                     }
                 }
+            } else {
+                System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
             }
+
+            System.out.println("TREE");
+            TreePrinter.printTree(hw.getBalancedBinarySearchTree());
+            System.out.println("END");
+
         }
     }
 

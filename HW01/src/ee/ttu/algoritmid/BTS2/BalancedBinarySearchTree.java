@@ -1,11 +1,9 @@
 package ee.ttu.algoritmid.BTS2;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.function.Function;
 
-public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
+public class BalancedBinarySearchTree<T>{
 
     private Node<T> root;
     private Comparator<T> comparator;
@@ -29,7 +27,6 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
         return comparator;
     }
 
-    @Override
     public void insert(T data) {
         Node<T> root = getRoot();
         if (root == null) {
@@ -39,7 +36,6 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
         }
     }
 
-    @Override
     public void delete(Node<T> node) {
         Node<T> y = node.getLeftChild() == null || node.getRightChild() == null ? node : successor(node);
         Node<T> x = y.getLeftChild() != null ? y.getLeftChild() : y.getRightChild();
@@ -76,24 +72,13 @@ public class BalancedBinarySearchTree<T> implements BinarySearchTree<T>{
         return node;
     }
 
-    @Override
     public Node<T> search(T data, TriPredicate<T> bestMatchPredicate) {
+        return search(data, bestMatchPredicate, getComparator());
+    }
+
+    public Node<T> search(T data, TriPredicate<T> bestMatchPredicate, Comparator<T> comparator) {
         if (getRoot() == null) return null;
         return getRoot().search(data, null, comparator, bestMatchPredicate);
-    }
-
-    @Override
-    public List<T> toList() {
-        List<T> treeAsList = new ArrayList<>();
-        buildList(getRoot(), treeAsList);
-        return treeAsList;
-    }
-
-    private void buildList(Node<T> node, List<T> treeAsList) {
-        if (node == null) return;
-        buildList(node.getLeftChild(), treeAsList);
-        treeAsList.add(node.getData());
-        buildList(node.getRightChild(), treeAsList);
     }
 
     void rotateLeft(Node<T> node) {

@@ -155,10 +155,10 @@ public class Node<T> {
         if (bestMatchPredicate.test(searchData, bestMatch == null ? null : bestMatch.getData(), getData())) {
             bestMatch = this;
         }
-        int comparisonResult = comparator.compare(getData(), searchData);
+        int comparisonResult = comparator.compare(searchData, getData());
         if (comparisonResult == 0) {
             return bestMatch;
-        } else if (comparisonResult > 0) {
+        } else if (comparisonResult < 0) {
             return getLeftChild() != null ? getLeftChild().search(searchData, bestMatch, comparator, bestMatchPredicate) : bestMatch;
         } else {
             return getRightChild() != null ? getRightChild().search(searchData, bestMatch, comparator, bestMatchPredicate) : bestMatch;

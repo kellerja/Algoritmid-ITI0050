@@ -1,50 +1,62 @@
 package ee.ttu.algoritmid.dancers;
 
-import ee.ttu.algoritmid.BTS2.BalancedBinarySearchTree;
-import ee.ttu.algoritmid.BTS2.BinarySearchTree;
-import ee.ttu.algoritmid.BTS2.Node;
-import ee.ttu.algoritmid.BTS2.TreePrinter;
+import ee.ttu.algoritmid.BTS2.*;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 public class HW01 implements Dancers {
 
-    private final BalancedBinarySearchTree<Dancer> binarySearchTree;
+    private final BalancedBinarySearchTree<Dancer> maleSearchTree;
+    private final BalancedBinarySearchTree<Dancer> femaleSearchTree;
 
     public HW01() {
-        binarySearchTree = new BalancedBinarySearchTree<>((dancer1, dancer2) -> {
-            int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
-            Dancer first, second;
-            if (dancer1.getGender() == Dancer.Gender.FEMALE) {
-                first = dancer1;
-                second = dancer2;
-            } else {
-                first = dancer2;
-                second = dancer1;
-            }
-            return comp == 0 ? second.getGender().compareTo(first.getGender()) : comp;
-        }, node -> node == null ? "null" : "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
+        Comparator<Dancer> insertComparator = Comparator.comparingInt(Dancer::getHeight);
+        maleSearchTree = new BalancedBinarySearchTree<>(insertComparator, node -> node == null ? "null" : "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
+        femaleSearchTree = new BalancedBinarySearchTree<>(insertComparator, node -> node == null ? "null" : "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
     }
 
     @Override
     public SimpleEntry<Dancer, Dancer> findPartnerFor(Dancer candidate) throws IllegalArgumentException {
         if (candidate == null) throw new IllegalArgumentException("Dancer must not be null");
-        Node<Dancer> node = binarySearchTree.search(candidate,
-                (search, best, current) -> {
-                        //if (best != null && search.getID() == best.getID()) return false;
-                        //if (search.getID() == current.getID()) return true;
-                        if (search.getGender() != current.getGender()
-                                && (search.getGender().equals(Dancer.Gender.MALE) && search.getHeight() > current.getHeight()
-                                || search.getGender().equals(Dancer.Gender.FEMALE) && search.getHeight() < current.getHeight())) {
-                            if (best == null
-                                    || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) return true;
-                        }
-                        return false;
-        });
+        BalancedBinarySearchTree<Dancer> binarySearchTree;
+        BalancedBinarySearchTree<Dancer> binaryInsertTree;
+        TriPredicate<Dancer> bestMatchPredicate;
+        Comparator<Dancer> searchComparator;
+        if (candidate.getGender() == Dancer.Gender.MALE) {
+            binarySearchTree = femaleSearchTree;
+            binaryInsertTree = maleSearchTree;
+            bestMatchPredicate = (search, best, current) -> {
+                if (search.getHeight() > current.getHeight()) {
+                    if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            searchComparator = Comparator.comparingInt(Dancer::getHeight);
+        } else {
+            binarySearchTree = maleSearchTree;
+            binaryInsertTree = femaleSearchTree;
+            bestMatchPredicate = (search, best, current) -> {
+                if (search.getHeight() < current.getHeight()) {
+                    if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            searchComparator = (dancer1, dancer2) -> {
+                int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
+                return comp == 0 ? 1 : comp;
+            };
+        }
+        Node<Dancer> node = binarySearchTree.search(candidate, bestMatchPredicate, searchComparator);
         if (node == null) {
-            binarySearchTree.insert(candidate);
+            binaryInsertTree.insert(candidate);
             return null;
         }
         Dancer partner = node.getData();
@@ -58,9 +70,31 @@ public class HW01 implements Dancers {
         return new SimpleEntry<>(first, second);
     }
 
+    private void buildList(Node<Dancer> male, Node<Dancer> female, List<Dancer> dancers) {
+        if (male == null && female == null) {
+            return;
+        }
+        if (female != null) buildList(male, female.getLeftChild(), dancers);
+        if (male != null) buildList(male.getLeftChild(), female, dancers);
+        if (male != null && female != null && male.getHeight() == female.getHeight()) {
+            dancers.add(female.getData());
+            dancers.add(male.getData());
+        } else if (male != null && female != null && male.getHeight() > female.getHeight()) {
+            dancers.add(female.getData());
+            dancers.add(male.getData());
+        } else {
+            if (male != null) dancers.add(male.getData());
+            if (female != null) dancers.add(female.getData());
+        }
+        if (female != null) buildList(male, female.getRightChild(), dancers);
+        if (male != null) buildList(male.getRightChild(), female, dancers);
+    }
+
     @Override
     public List<Dancer> returnWaitingList() {
-        return binarySearchTree.toList();
+        List<Dancer> dancers = new ArrayList<>();
+        buildList(maleSearchTree.getRoot(), femaleSearchTree.getRoot(), dancers);
+        return dancers;
     }
 
     public static void main(String[] args) {
@@ -74,6 +108,8 @@ public class HW01 implements Dancers {
         testBalanceAllRight(new HW01());
         System.out.println();
         testBalanceRandom1(new HW01());
+        System.out.println();
+        testNullPointer(new HW01());
     }
 
     private static void testBalanceRandom1(HW01 hw01) {
@@ -87,8 +123,8 @@ public class HW01 implements Dancers {
         Dancer generated = null;
         try {
             for (int i = 0; i < 1000000; i++) {
-                mem = hw01.binarySearchTree;
-                if (random.nextBoolean()) {
+                mem = hw01.maleSearchTree;
+                if (random.nextInt(100) >= 20) {
                     generated = newDancer(id++, Dancer.Gender.FEMALE, random.nextInt(200));
                     dancerDancerSimpleEntry = hw01.findPartnerFor(generated);
                 } else {
@@ -99,7 +135,7 @@ public class HW01 implements Dancers {
         } catch (NullPointerException e) {
             e.printStackTrace();
             TreePrinter.printTree(mem);
-            System.out.println(hw01.binarySearchTree.getToStringFunction().apply(new Node<>(generated)));
+            System.out.println(hw01.maleSearchTree.getToStringFunction().apply(new Node<>(generated)));
         }
     }
 
@@ -108,14 +144,16 @@ public class HW01 implements Dancers {
         return isInconsistent(node, node.getLeftChild()) && node.getParent() == caller && isInconsistent(node, node.getRightChild());
     }
 
+    public BalancedBinarySearchTree<Dancer> getBalancedBinarySearchTree() {
+        return maleSearchTree;
+    }
+
     private static void testNullPointer(HW01 hw01) {
         SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
         int id = 0;
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 36));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 198));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 145));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 21));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 48));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 164));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 141));
     }
 
     private static void testBalanceAllLeft(HW01 hw01) {
