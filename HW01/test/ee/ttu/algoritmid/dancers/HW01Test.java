@@ -58,28 +58,14 @@ public class HW01Test {
             if (result != null) {
                 if (dancer.getGender() == FEMALE) {
                     if (tallestClosest != null) {
-                        System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")->(" + tallestClosest.getID() + " " + tallestClosest.getGender() + " " + tallestClosest.getHeight() + ")=(" + result.getValue().getID() + " " + result.getValue().getGender() + " " + result.getValue().getHeight() + ")");
                         assertEquals(tallestClosest.getHeight(), result.getValue().getHeight());
                     }
                 } else {
                     if (smallestClosest != null) {
-                        System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")->(" + smallestClosest.getID() + " " + smallestClosest.getGender() + " " + smallestClosest.getHeight() + ")=(" + result.getKey().getID() + " " + result.getKey().getGender() + " " + result.getKey().getHeight() + ")");
                         assertEquals(smallestClosest.getHeight(), result.getKey().getHeight());
                     }
                 }
-            } else {
-                System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
             }
-
-            System.out.println("MALE TREE");
-            TreePrinter.printTree(hw.getMaleSearchTree());
-            System.out.println("FEMALE TREE");
-            TreePrinter.printTree(hw.getFemaleSearchTree());
-            System.out.println("WAITING LIST");
-            hw.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ")"));
-            System.out.println();
-            System.out.println("END");
-
         }
     }
 
@@ -114,6 +100,93 @@ public class HW01Test {
             }
         }
         return dancer;
+    }
+
+    @org.junit.Test
+    public void testLargeRandomData() {
+        HW01 hw = new HW01();
+        List<Dancer> males = new ArrayList<>();
+        List<Dancer> females = new ArrayList<>();
+        Random random = new Random();
+        Dancer dancer;
+        Dancer expected;
+        for (int i = 0; i < 10000; i++) {
+            if (random.nextInt(100) >= 20) {
+                dancer = createDancer(i, MALE, random.nextInt(20) + 1);
+                expected = getExpectedResultForMale(dancer, females);
+                if (expected != null) {
+                    females.remove(expected);
+                } else {
+                    males.add(dancer);
+                }
+            } else {
+                dancer = createDancer(i, FEMALE, random.nextInt(20) + 1);
+                expected = getExpectedResultForFemale(dancer, males);
+                if (expected != null) {
+                    males.remove(expected);
+                } else {
+                    females.add(dancer);
+                }
+            }
+            AbstractMap.SimpleEntry<Dancer, Dancer> result = hw.findPartnerFor(dancer);
+            if (result == null && expected != null) {
+                System.out.println("MALE TREE");
+                TreePrinter.printTree(hw.getMaleSearchTree());
+                System.out.println("FEMALE TREE");
+                TreePrinter.printTree(hw.getFemaleSearchTree());
+                fail(i + " Expected (" + expected.getID() + " " + expected.getGender() + " " + expected.getHeight() + ") but did not get one when searching for (" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
+            } else if (result != null && expected == null) {
+                System.out.println("MALE TREE");
+                TreePrinter.printTree(hw.getMaleSearchTree());
+                System.out.println("FEMALE TREE");
+                TreePrinter.printTree(hw.getFemaleSearchTree());
+                Dancer resultDancer = dancer.getGender() == MALE ? result.getKey() : result.getValue();
+                fail(i + " Was not expecting a result but got (" + resultDancer.getID() + " " + resultDancer.getGender() + " " + resultDancer.getHeight() + ") when searching for (" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
+            } else if (result != null) {
+                Dancer resultDancer = dancer.getGender() == MALE ? result.getKey() : result.getValue();
+                if (expected.getGender() != resultDancer.getGender()) {
+                    System.out.println("MALE TREE");
+                    TreePrinter.printTree(hw.getMaleSearchTree());
+                    System.out.println("FEMALE TREE");
+                    TreePrinter.printTree(hw.getFemaleSearchTree());
+                    fail(i + " Expected (" + expected.getID() + " " + expected.getGender() + " " + expected.getHeight() + ") but got (" + resultDancer.getID() + " " + resultDancer.getGender() + " " + resultDancer.getHeight() + ") when searching for (" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
+                } else if (expected.getHeight() != resultDancer.getHeight()) {
+                    System.out.println("MALE TREE");
+                    TreePrinter.printTree(hw.getMaleSearchTree());
+                    System.out.println("FEMALE TREE");
+                    TreePrinter.printTree(hw.getFemaleSearchTree());
+                    fail(i + " Expected (" + expected.getID() + " " + expected.getGender() + " " + expected.getHeight() + ") but got (" + resultDancer.getID() + " " + resultDancer.getGender() + " " + resultDancer.getHeight() + ") when searching for (" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
+                }
+            }
+        }
+        hw.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
+        System.out.println();
+        assertEquals(males.size() + females.size(), hw.getMaleSearchTree().toList().size() + hw.getFemaleSearchTree().toList().size());
+        assertEquals(males.size() + females.size(), hw.returnWaitingList().size());
+    }
+
+    private Dancer getExpectedResultForFemale(Dancer dancer, List<Dancer> dancers) {
+        Dancer best = null;
+        for (Dancer current: dancers) {
+            if (dancer.getHeight() < current.getHeight()) {
+                if (best == null || best.getHeight() > current.getHeight()) {
+                    best = current;
+                }
+            }
+        }
+        return best;
+    }
+
+    private Dancer getExpectedResultForMale(Dancer dancer, List<Dancer> dancers) {
+        Dancer best = null;
+        for (Dancer current: dancers) {
+            if (dancer.getHeight() > current.getHeight()) {
+                if (best == null || best.getHeight() < current.getHeight()) {
+                    best = current;
+                }
+            }
+        }
+        return best;
     }
 
     @org.junit.Test

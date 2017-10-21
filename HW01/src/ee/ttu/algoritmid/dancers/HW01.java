@@ -90,16 +90,16 @@ public class HW01 implements Dancers {
         while (male != null || female != null) {
             if (male == null) {
                 dancers.add(female.getData());
-                female = femaleSearchTree.successor(female);
+                female = femaleSearchTree.nextNode(female);
             } else if (female == null) {
                 dancers.add(male.getData());
-                male = maleSearchTree.successor(male);
+                male = maleSearchTree.nextNode(male);
             } else if (male.getData().getHeight() >= female.getData().getHeight()) {
                 dancers.add(female.getData());
-                female = femaleSearchTree.successor(female);
+                female = femaleSearchTree.nextNode(female);
             } else {
                 dancers.add(male.getData());
-                male = maleSearchTree.successor(male);
+                male = maleSearchTree.nextNode(male);
             }
         }
     }
