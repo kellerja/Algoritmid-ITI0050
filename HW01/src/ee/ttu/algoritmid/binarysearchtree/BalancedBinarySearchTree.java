@@ -59,7 +59,6 @@ public class BalancedBinarySearchTree<T>{
         if (node.getRightChild() != null) return minimum(node.getRightChild());
         Node<T> parent = node.getParent();
         if (parent != null && parent.getLeftChild() == node && comparator.compare(node.getData(), parent.getData()) == 0) {
-            System.out.println(getToStringFunction().apply(node) + " " + getToStringFunction().apply(parent));
             return parent;
         }
         while (parent != null && parent.getRightChild() != null && comparator.compare(node.getData(), parent.getRightChild().getData()) == 0) {
