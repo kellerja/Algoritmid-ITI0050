@@ -71,26 +71,20 @@ public class HW01 implements Dancers {
     }
 
     private void buildList(Node<Dancer> male, Node<Dancer> female, List<Dancer> dancers) {
-        if (male == null && female == null) return;
-        if (male == null) {
-            dancers.add(female.getData());
-            buildList(null, femaleSearchTree.successor(female), dancers);
-            return;
-        }
-        if (female == null) {
-            dancers.add(male.getData());
-            buildList(maleSearchTree.successor(male), null, dancers);
-            return;
-        }
-        if (male.getHeight() == female.getHeight()) {
-            dancers.add(female.getData());
-            buildList(male, femaleSearchTree.successor(female), dancers);
-        } else if (male.getHeight() > female.getHeight()) {
-            dancers.add(female.getData());
-            buildList(male, femaleSearchTree.successor(female), dancers);
-        } else if (male.getHeight() < female.getHeight()) {
-            dancers.add(male.getData());
-            buildList(maleSearchTree.successor(male), female, dancers);
+        while (male != null || female != null) {
+            if (male == null) {
+                dancers.add(female.getData());
+                female = femaleSearchTree.successor(female);
+            } else if (female == null) {
+                dancers.add(male.getData());
+                male = maleSearchTree.successor(male);
+            } else if (male.getData().getHeight() > female.getData().getHeight()) {
+                dancers.add(female.getData());
+                female = femaleSearchTree.successor(female);
+            } else {
+                dancers.add(male.getData());
+                male = maleSearchTree.successor(male);
+            }
         }
     }
 
@@ -156,6 +150,7 @@ public class HW01 implements Dancers {
         SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
         int id = 0;
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 164));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 161));
         hw01.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
