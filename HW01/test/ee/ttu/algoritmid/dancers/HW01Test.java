@@ -111,8 +111,8 @@ public class HW01Test {
         Dancer dancer;
         Dancer expected;
         for (int i = 0; i < 10000; i++) {
-            if (random.nextInt(100) >= 20) {
-                dancer = createDancer(i, MALE, random.nextInt(20) + 1);
+            if (random.nextInt(100) >= 50) {
+                dancer = createDancer(i, MALE, random.nextInt(200) + 1);
                 expected = getExpectedResultForMale(dancer, females);
                 if (expected != null) {
                     females.remove(expected);
@@ -120,7 +120,7 @@ public class HW01Test {
                     males.add(dancer);
                 }
             } else {
-                dancer = createDancer(i, FEMALE, random.nextInt(20) + 1);
+                dancer = createDancer(i, FEMALE, random.nextInt(200) + 1);
                 expected = getExpectedResultForFemale(dancer, males);
                 if (expected != null) {
                     males.remove(expected);
@@ -162,7 +162,34 @@ public class HW01Test {
         hw.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
         System.out.println();
         assertEquals(males.size() + females.size(), hw.getMaleSearchTree().toList().size() + hw.getFemaleSearchTree().toList().size());
-        assertEquals(males.size() + females.size(), hw.returnWaitingList().size());
+        assertEquals(males.size(), hw.getMaleSearchTree().toList().size());
+        assertEquals(females.size(), hw.getFemaleSearchTree().toList().size());
+        List<Dancer> waitingList = hw.returnWaitingList();
+        assertEquals(males.size() + females.size(), waitingList.size());
+        System.out.println("END SIZE " + waitingList.size());
+        for (Dancer dancerWaiting: waitingList) {
+            if (dancerWaiting.getGender() == MALE) {
+                if (!contains(males, dancerWaiting)) {
+                    fail("Waiting (" + dancerWaiting.getID() + " " + dancerWaiting.getGender() + " " + dancerWaiting.getHeight() + ") not in males list");
+                }
+            } else if (dancerWaiting.getGender() == FEMALE) {
+                if (!contains(females, dancerWaiting)) {
+                    fail("Waiting (" + dancerWaiting.getID() + " " + dancerWaiting.getGender() + " " + dancerWaiting.getHeight() + ") not in females list");
+                }
+            }
+        }
+        assertEquals(0, males.size());
+        assertEquals(0, females.size());
+    }
+
+    private boolean contains(List<Dancer> list, Dancer dancer) {
+        for (Dancer listElement: list) {
+            if (listElement.getGender() == dancer.getGender() && listElement.getHeight() == dancer.getHeight()) {
+                list.remove(listElement);
+                return true;
+            }
+        }
+        return false;
     }
 
     private Dancer getExpectedResultForFemale(Dancer dancer, List<Dancer> dancers) {
