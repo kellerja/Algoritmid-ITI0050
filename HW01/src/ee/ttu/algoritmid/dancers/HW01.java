@@ -78,7 +78,7 @@ public class HW01 implements Dancers {
             } else if (female == null) {
                 dancers.add(male.getData());
                 male = maleSearchTree.successor(male);
-            } else if (male.getData().getHeight() > female.getData().getHeight()) {
+            } else if (male.getData().getHeight() >= female.getData().getHeight()) {
                 dancers.add(female.getData());
                 female = femaleSearchTree.successor(female);
             } else {
@@ -149,9 +149,11 @@ public class HW01 implements Dancers {
     private static void testNullPointer(HW01 hw01) {
         SimpleEntry<Dancer, Dancer> dancerDancerSimpleEntry;
         int id = 0;
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 165));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 150));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 150));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 150));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 164));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 161));
         hw01.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
     }
