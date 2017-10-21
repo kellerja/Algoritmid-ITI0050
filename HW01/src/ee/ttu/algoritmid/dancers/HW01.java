@@ -71,44 +71,48 @@ public class HW01 implements Dancers {
     }
 
     private void buildList(Node<Dancer> male, Node<Dancer> female, List<Dancer> dancers) {
-        if (male == null && female == null) {
+        if (male == null && female == null) return;
+        if (male == null) {
+            dancers.add(female.getData());
+            buildList(null, femaleSearchTree.successor(female), dancers);
             return;
         }
-        if (female != null) buildList(male, female.getLeftChild(), dancers);
-        if (male != null) buildList(male.getLeftChild(), female, dancers);
-        if (male != null && female != null && male.getHeight() == female.getHeight()) {
-            dancers.add(female.getData());
+        if (female == null) {
             dancers.add(male.getData());
-        } else if (male != null && female != null && male.getHeight() > female.getHeight()) {
-            dancers.add(female.getData());
-            dancers.add(male.getData());
-        } else {
-            if (male != null) dancers.add(male.getData());
-            if (female != null) dancers.add(female.getData());
+            buildList(maleSearchTree.successor(male), null, dancers);
+            return;
         }
-        if (female != null) buildList(male, female.getRightChild(), dancers);
-        if (male != null) buildList(male.getRightChild(), female, dancers);
+        if (male.getHeight() == female.getHeight()) {
+            dancers.add(female.getData());
+            buildList(male, femaleSearchTree.successor(female), dancers);
+        } else if (male.getHeight() > female.getHeight()) {
+            dancers.add(female.getData());
+            buildList(male, femaleSearchTree.successor(female), dancers);
+        } else if (male.getHeight() < female.getHeight()) {
+            dancers.add(male.getData());
+            buildList(maleSearchTree.successor(male), female, dancers);
+        }
     }
 
     @Override
     public List<Dancer> returnWaitingList() {
         List<Dancer> dancers = new ArrayList<>();
-        buildList(maleSearchTree.getRoot(), femaleSearchTree.getRoot(), dancers);
+        buildList(maleSearchTree.minimum(maleSearchTree.getRoot()), femaleSearchTree.minimum(femaleSearchTree.getRoot()), dancers);
         return dancers;
     }
 
     public static void main(String[] args) {
-        System.out.println();
-        femaleTestData(new HW01());
-        System.out.println();
-        maleTestData(new HW01());
-        System.out.println();
-        testBalanceAllLeft(new HW01());
-        System.out.println();
-        testBalanceAllRight(new HW01());
-        System.out.println();
-        testBalanceRandom1(new HW01());
-        System.out.println();
+        //System.out.println();
+        //femaleTestData(new HW01());
+        //System.out.println();
+        //maleTestData(new HW01());
+        //System.out.println();
+        //testBalanceAllLeft(new HW01());
+        //System.out.println();
+        //testBalanceAllRight(new HW01());
+        //System.out.println();
+        //testBalanceRandom1(new HW01());
+        //System.out.println();
         testNullPointer(new HW01());
     }
 
@@ -153,7 +157,8 @@ public class HW01 implements Dancers {
         int id = 0;
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 164));
         dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.MALE, 160));
-        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 141));
+        dancerDancerSimpleEntry = hw01.findPartnerFor(newDancer(id++, Dancer.Gender.FEMALE, 161));
+        hw01.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
     }
 
     private static void testBalanceAllLeft(HW01 hw01) {

@@ -54,17 +54,18 @@ public class BalancedBinarySearchTree<T>{
         }
     }
 
-    private Node<T> successor(Node<T> node) {
+    public Node<T> successor(Node<T> node) {
+        if (node == null) return null;
         if (node.getRightChild() != null) return minimum(node.getRightChild());
         Node<T> parent = node.getParent();
-        while (parent != null && comparator.compare(node.getData(), parent.getRightChild().getData()) == 0) {
+        while (parent != null && parent.getRightChild() != null && comparator.compare(node.getData(), parent.getRightChild().getData()) == 0) {
             node = parent;
             parent = parent.getParent();
         }
         return parent;
     }
 
-    private Node<T> minimum(Node<T> node) {
+    public Node<T> minimum(Node<T> node) {
         if (node == null) return null;
         while (node.getLeftChild() != null) {
             node = node.getLeftChild();
