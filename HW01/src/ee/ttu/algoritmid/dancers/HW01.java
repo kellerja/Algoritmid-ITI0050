@@ -12,6 +12,8 @@ public class HW01 implements Dancers {
 
     private final BalancedBinarySearchTree<Dancer> maleSearchTree;
     private final BalancedBinarySearchTree<Dancer> femaleSearchTree;
+    private final TriPredicate<Dancer> maleBestMatchPredicate;
+    private final TriPredicate<Dancer> femaleBestMatchPredicate;
 
     public HW01() {
         Comparator<Dancer> insertComparator = Comparator.comparingInt(Dancer::getHeight);
@@ -23,6 +25,23 @@ public class HW01 implements Dancers {
                                 (node.getRightChild() == null ? " N" : " " + node.getRightChild().getData().getID());
         maleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
         femaleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
+
+        maleBestMatchPredicate = (search, best, current) -> {
+            if (search.getHeight() > current.getHeight()) {
+                if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        femaleBestMatchPredicate = (search, best, current) -> {
+            if (search.getHeight() < current.getHeight()) {
+                if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
+                    return true;
+                }
+            }
+            return false;
+        };
     }
 
     @Override
@@ -35,14 +54,7 @@ public class HW01 implements Dancers {
         if (candidate.getGender() == Dancer.Gender.MALE) {
             binarySearchTree = femaleSearchTree;
             binaryInsertTree = maleSearchTree;
-            bestMatchPredicate = (search, best, current) -> {
-                if (search.getHeight() > current.getHeight()) {
-                    if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
-                        return true;
-                    }
-                }
-                return false;
-            };
+            bestMatchPredicate = maleBestMatchPredicate;
             searchComparator = (dancer1, dancer2) -> {
                 int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
                 return comp == 0 ? -1 : comp;
@@ -50,14 +62,7 @@ public class HW01 implements Dancers {
         } else {
             binarySearchTree = maleSearchTree;
             binaryInsertTree = femaleSearchTree;
-            bestMatchPredicate = (search, best, current) -> {
-                if (search.getHeight() < current.getHeight()) {
-                    if (best == null || Math.abs(search.getHeight() - best.getHeight()) > Math.abs(search.getHeight() - current.getHeight())) {
-                        return true;
-                    }
-                }
-                return false;
-            };
+            bestMatchPredicate = femaleBestMatchPredicate;
             searchComparator = (dancer1, dancer2) -> {
                 int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
                 return comp == 0 ? 1 : comp;
