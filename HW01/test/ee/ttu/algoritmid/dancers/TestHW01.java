@@ -74,10 +74,13 @@ public class TestHW01 {
                 System.out.println("(" + dancer.getID() + " " + dancer.getGender() + " " + dancer.getHeight() + ")");
             }
 
-            System.out.println("MALE TREE");
+            System.out.println("TREE");
             TreePrinter.printTree(hw.getMaleSearchTree());
             System.out.println("FEMALE TREE");
             TreePrinter.printTree(hw.getFemaleSearchTree());
+            System.out.println("WAITING LIST");
+            hw.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ")"));
+            System.out.println();
             System.out.println("END");
 
         }

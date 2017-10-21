@@ -1,6 +1,8 @@
 package ee.ttu.algoritmid.dancers;
 
-import ee.ttu.algoritmid.binarysearchtree.*;
+import ee.ttu.algoritmid.binarysearchtree.BalancedBinarySearchTree;
+import ee.ttu.algoritmid.binarysearchtree.Node;
+import ee.ttu.algoritmid.binarysearchtree.TriPredicate;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
