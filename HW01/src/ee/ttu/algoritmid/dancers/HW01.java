@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 public class HW01 implements Dancers {
 
@@ -15,8 +16,14 @@ public class HW01 implements Dancers {
 
     public HW01() {
         Comparator<Dancer> insertComparator = Comparator.comparingInt(Dancer::getHeight);
-        maleSearchTree = new BalancedBinarySearchTree<>(insertComparator, node -> node == null ? "null" : "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
-        femaleSearchTree = new BalancedBinarySearchTree<>(insertComparator, node -> node == null ? "null" : "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance());
+        Function<Node<Dancer>, String> toString = node ->
+                node == null ? "null" :
+                        (node.getLeftChild() == null ? "N " : node.getLeftChild().getData().getID() + " ") +
+                                (node.getParent() == null ? "N " : node.getParent().getData().getID() + " ") +
+                                "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance() +
+                                (node.getRightChild() == null ? " N" : " " + node.getRightChild().getData().getID());
+        maleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
+        femaleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
     }
 
     @Override
@@ -37,7 +44,10 @@ public class HW01 implements Dancers {
                 }
                 return false;
             };
-            searchComparator = Comparator.comparingInt(Dancer::getHeight);
+            searchComparator = (dancer1, dancer2) -> {
+                int comp = Integer.compare(dancer1.getHeight(), dancer2.getHeight());
+                return comp == 0 ? -1 : comp;
+            };
         } else {
             binarySearchTree = maleSearchTree;
             binaryInsertTree = femaleSearchTree;
@@ -142,8 +152,12 @@ public class HW01 implements Dancers {
         return isInconsistent(node, node.getLeftChild()) && node.getParent() == caller && isInconsistent(node, node.getRightChild());
     }
 
-    public BalancedBinarySearchTree<Dancer> getBalancedBinarySearchTree() {
+    public BalancedBinarySearchTree<Dancer> getMaleSearchTree() {
         return maleSearchTree;
+    }
+
+    public BalancedBinarySearchTree<Dancer> getFemaleSearchTree() {
+        return femaleSearchTree;
     }
 
     private static void testNullPointer(HW01 hw01) {
