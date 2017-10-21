@@ -1,4 +1,4 @@
-package ee.ttu.algoritmid.BTS2;
+package ee.ttu.algoritmid.binarysearchtree;
 
 import java.util.ArrayList;
 import java.util.List;

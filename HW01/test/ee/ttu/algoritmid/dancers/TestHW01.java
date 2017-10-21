@@ -1,6 +1,6 @@
 package ee.ttu.algoritmid.dancers;
 
-import ee.ttu.algoritmid.BTS2.TreePrinter;
+import ee.ttu.algoritmid.binarysearchtree.TreePrinter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
