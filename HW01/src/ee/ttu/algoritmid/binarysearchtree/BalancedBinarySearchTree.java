@@ -19,7 +19,7 @@ public class BalancedBinarySearchTree<T>{
         return root;
     }
 
-    public void setRoot(Node<T> root) {
+    void setRoot(Node<T> root) {
         this.root = root;
     }
 
@@ -118,25 +118,6 @@ public class BalancedBinarySearchTree<T>{
             }
         }
         node.setParent(temp);
-    }
-
-    public static void main(String[] args) {
-        BalancedBinarySearchTree<Integer> bst = new BalancedBinarySearchTree<>(Integer::compareTo, o -> Integer.toString(o.getData()));
-        TreePrinter<Integer> treePrinter = new TreePrinter<>("NULL", n -> Integer.toString(n.getData()) + ":" + n.getHeight() + ":" + n.getBalance());
-        TriPredicate<Integer> predicate = (data, best, current) ->
-                !data.equals(best) && (data.equals(current) || Math.abs(data - (best == null ? Integer.MAX_VALUE : best)) > Math.abs(data - current));
-        bst.insert(2);
-        bst.insert(3);
-        bst.insert(1);
-        treePrinter.printTree(bst.getRoot());
-        bst.insert(5);
-        treePrinter.printTree(bst.getRoot());
-        bst.insert(7);
-        treePrinter.printTree(bst.getRoot());
-        Node<Integer> result = bst.search(4, predicate);
-        System.out.println("RESULT " + result.getData());
-        bst.delete(result);
-        treePrinter.printTree(bst.getRoot());
     }
 
     public Function<Node<T>, String> getToStringFunction() {
