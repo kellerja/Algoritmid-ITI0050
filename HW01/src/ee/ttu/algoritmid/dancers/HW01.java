@@ -125,38 +125,4 @@ public class HW01 implements Dancers {
     public BalancedBinarySearchTree<Dancer> getFemaleSearchTree() {
         return femaleSearchTree;
     }
-
-    public static void main(String[] args) {
-        HW01 hw01 = new HW01();
-        hw01.findPartnerFor(newDancer(1, Dancer.Gender.MALE, 50));
-        hw01.findPartnerFor(newDancer(2, Dancer.Gender.FEMALE, 160));
-        hw01.findPartnerFor(newDancer(3, Dancer.Gender.FEMALE, 60));
-        hw01.findPartnerFor(newDancer(3, Dancer.Gender.FEMALE, 50));
-        hw01.findPartnerFor(newDancer(4, Dancer.Gender.FEMALE, 70));
-        hw01.findPartnerFor(newDancer(5, Dancer.Gender.MALE, 80));
-        hw01.findPartnerFor(newDancer(6, Dancer.Gender.FEMALE, 90));
-        hw01.findPartnerFor(newDancer(7, Dancer.Gender.FEMALE, 100));
-        hw01.findPartnerFor(newDancer(8, Dancer.Gender.FEMALE, 110));
-        hw01.returnWaitingList().forEach(d -> System.out.print("(" + d.getID() + " " + d.getGender() + " " + d.getHeight() + ") "));
-        System.out.println();
-    }
-
-    private static Dancer newDancer(int id, Dancer.Gender gender, int height) {
-        return new Dancer() {
-            @Override
-            public int getID() {
-                return id;
-            }
-
-            @Override
-            public Gender getGender() {
-                return gender;
-            }
-
-            @Override
-            public int getHeight() {
-                return height;
-            }
-        };
-    }
 }
