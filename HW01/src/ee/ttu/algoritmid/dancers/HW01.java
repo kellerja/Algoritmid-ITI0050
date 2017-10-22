@@ -17,10 +17,9 @@ public class HW01 implements Dancers {
     private final BalancedBinarySearchTree<Dancer> femaleSearchTree;
     private final TriPredicate<Dancer> maleBestMatchPredicate;
     private final TriPredicate<Dancer> femaleBestMatchPredicate;
-    private final Comparator<Dancer> insertComparator;
 
     public HW01() {
-        insertComparator = Comparator.comparingInt(Dancer::getHeight);
+        Comparator<Dancer> insertComparator = Comparator.comparingInt(Dancer::getHeight);
         Function<Node<Dancer>, String> toString = node ->
                 node == null ? "null" :
                         (node.getLeftChild() == null ? "N " : node.getLeftChild().getData().getID() + " ") +
@@ -76,9 +75,6 @@ public class HW01 implements Dancers {
         if (node == null) {
             binaryInsertTree.insert(candidate);
             return null;
-        }
-        while (node.getLeftChild() != null && insertComparator.compare(node.getData(), node.getLeftChild().getData()) == 0) {
-            node = node.getLeftChild();
         }
         Dancer partner = node.getData();
         binarySearchTree.delete(node);
