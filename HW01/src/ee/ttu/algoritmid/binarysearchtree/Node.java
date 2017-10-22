@@ -156,6 +156,7 @@ public class Node<T> {
             bestMatch = this;
         }
         int comparisonResult = comparator.compare(searchData, getData());
+        int bestComparisonResult;
         if (comparisonResult == 0) {
             return bestMatch;
         } else if (comparisonResult < 0) {
