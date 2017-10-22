@@ -1,7 +1,5 @@
 package ee.ttu.algoritmid.binarysearchtree;
 
-import ee.ttu.algoritmid.dancers.Dancer;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -96,8 +94,6 @@ public class BalancedBinarySearchTree<T>{
         temp.setParent(node.getParent());
         if (node.getParent() == null) {
             setRoot(temp);
-            temp.setSubtreeHeightAndUpdateParentHeight(true, 0, this);
-            temp.setSubtreeHeightAndUpdateParentHeight(false, 0, this);
         } else {
             if (node.getParent().getLeftChild() == node) {
                 node.getParent().setLeftChild(temp);

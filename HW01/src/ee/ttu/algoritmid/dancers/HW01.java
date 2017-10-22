@@ -2,6 +2,7 @@ package ee.ttu.algoritmid.dancers;
 
 import ee.ttu.algoritmid.binarysearchtree.BalancedBinarySearchTree;
 import ee.ttu.algoritmid.binarysearchtree.Node;
+import ee.ttu.algoritmid.binarysearchtree.TreePrinter;
 import ee.ttu.algoritmid.binarysearchtree.TriPredicate;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -124,5 +125,44 @@ public class HW01 implements Dancers {
 
     public BalancedBinarySearchTree<Dancer> getFemaleSearchTree() {
         return femaleSearchTree;
+    }
+
+    public static void main(String[] args) {
+        HW01 hw01 = new HW01();
+        hw01.findPartnerFor(newDancer(1, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(2, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(3, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(4, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(5, Dancer.Gender.MALE, 10));
+        TreePrinter.printTree(hw01.maleSearchTree);
+        hw01.findPartnerFor(newDancer(6, Dancer.Gender.MALE, 10));
+        TreePrinter.printTree(hw01.maleSearchTree);
+        /*
+        hw01.findPartnerFor(newDancer(7, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(8, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(9, Dancer.Gender.MALE, 10));
+        hw01.findPartnerFor(newDancer(10, Dancer.Gender.MALE, 10));
+        TreePrinter.printTree(hw01.maleSearchTree);*/
+        //hw01.findPartnerFor(newDancer(11, Dancer.Gender.FEMALE, 9));
+        //TreePrinter.printTree(hw01.maleSearchTree);
+    }
+
+    private static Dancer newDancer(int id, Dancer.Gender gender, int height) {
+        return new Dancer() {
+            @Override
+            public int getID() {
+                return id;
+            }
+
+            @Override
+            public Gender getGender() {
+                return gender;
+            }
+
+            @Override
+            public int getHeight() {
+                return height;
+            }
+        };
     }
 }
