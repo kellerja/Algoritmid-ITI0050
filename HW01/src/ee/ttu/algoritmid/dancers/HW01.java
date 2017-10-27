@@ -27,14 +27,6 @@ public class HW01 implements Dancers {
                                 "(" + node.getData().getID() + " " + node.getData().getGender() + " " + node.getData().getHeight() + "):" + node.getLeftSubtreeHeight() + ":" + node.getHeight() + ":" + node.getRightSubtreeHeight() + ":" + node.getBalance() +
                                 (node.getRightChild() == null ? " N" : " " + node.getRightChild().getData().getID());
         maleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
-        insertComparator = (d1, d2) -> {
-            int comp = Integer.compare(d1.getHeight(), d2.getHeight());
-            if (comp == 0) {
-                return -1;
-            } else {
-                return comp;
-            }
-        };
         femaleSearchTree = new BalancedBinarySearchTree<>(insertComparator, toString);
 
         maleBestMatchPredicate = (search, best, current) -> {

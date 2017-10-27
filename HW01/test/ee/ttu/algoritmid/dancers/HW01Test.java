@@ -112,9 +112,9 @@ public class HW01Test {
         Dancer expected;
         int malesCreated = 0, femalesCreated = 0;
         for (int i = 0; i < 10000; i++) {
-            if (random.nextInt(100) >= 49) {
+            if (random.nextInt(100) >= 2) {
                 malesCreated++;
-                dancer = createDancer(i, MALE, random.nextInt(30) + 100);
+                dancer = createDancer(i, MALE, random.nextInt(2) + 2);
                 expected = getExpectedResultForMale(dancer, females);
                 if (expected != null) {
                     females.remove(expected);
@@ -123,7 +123,7 @@ public class HW01Test {
                 }
             } else {
                 femalesCreated++;
-                dancer = createDancer(i, FEMALE, random.nextInt(30) + 1);
+                dancer = createDancer(i, FEMALE, random.nextInt(2) + 2);
                 expected = getExpectedResultForFemale(dancer, males);
                 if (expected != null) {
                     males.remove(expected);
