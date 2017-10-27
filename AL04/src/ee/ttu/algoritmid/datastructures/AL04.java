@@ -308,11 +308,11 @@ public class AL04 {
             insertOrder.add(i);
         }
 
-        for (int i = 100; i < 300; i+=2) {
+        for (int i = 100; i < 2000; i*= 2) {
             searchOrder.add(i);
         }
 
-        for (int i = 1000; i < 1500; i+=2) {
+        for (int i = 1000; i < 1500; i+=3) {
             deleteOrder.add(i);
         }
         // Example can be found in the 'priorityQueueIsBestWhen' method or in 'ained.ttu.ee'.
