@@ -214,6 +214,10 @@ public class AL04 {
             insertOrder.add(i);
         }
 
+        for (int i = 0; i < 200; i++) {
+            searchOrder.add(i + 500);
+        }
+
         for (int i = 0; i < 4500; i++) {
             deleteMin.add(true);
         }
