@@ -210,7 +210,7 @@ public class AL04 {
         deleteMin.clear();
 
         // TODO: Finish this function. The clear() commands at the top and the return statement must remain as they are.
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 2000; i++) {
             insertOrder.add(i);
         }
 
@@ -272,13 +272,14 @@ public class AL04 {
         deleteMin.clear();
 
         // TODO: Finish this function. The clear() commands at the top and the return statement must remain as they are.
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 2000; i++) {
             insertOrder.add(i);
         }
 
-        for (int i = 2000; i < 5000; i+= 3)  {
-            deleteOrder.add(i);
+        for (int i = 200; i < 2000; i+= 3)  {
+            searchOrder.add(i);
         }
+
         // Example can be found in the 'priorityQueueIsBestWhen' method or in 'ained.ttu.ee'.
 
         return dataStructureComparison(insertOrder, searchOrder, deleteOrder, deleteMin, NUMBER_OF_REPEATS);
@@ -303,15 +304,15 @@ public class AL04 {
         deleteMin.clear();
         
         // TODO: Finish this function. The clear() commands at the top and the return statement must remain as they are.
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 2000; i++) {
             insertOrder.add(i);
         }
 
-        for (int i = 0; i < 5000; i+=2) {
+        for (int i = 0; i < 2000; i+=2) {
             searchOrder.add(i);
         }
 
-        for (int i = 0; i < 5000; i+=2) {
+        for (int i = 0; i < 2000; i+=2) {
             deleteOrder.add(i);
         }
         // Example can be found in the 'priorityQueueIsBestWhen' method or in 'ained.ttu.ee'.
