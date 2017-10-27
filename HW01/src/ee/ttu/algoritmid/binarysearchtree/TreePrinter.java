@@ -8,9 +8,15 @@ public class TreePrinter<T> {
 
     private String nullString;
     private Function<Node<T>, String> toString;
+    private final String startSeparator;
+    private final String endSeparator;
 
     public static <T> void printTree(BalancedBinarySearchTree<T> binarySearchTree) {
-        TreePrinter<T> treePrinter = new TreePrinter<T>(makeNullString(binarySearchTree.getRoot(), binarySearchTree), binarySearchTree.getToStringFunction());
+        printTree(binarySearchTree, null, null);
+    }
+
+    public static <T> void printTree(BalancedBinarySearchTree<T> binarySearchTree, String startSeparator, String endSeparator) {
+        TreePrinter<T> treePrinter = new TreePrinter<T>(makeNullString(binarySearchTree.getRoot(), binarySearchTree), binarySearchTree.getToStringFunction(), startSeparator, endSeparator);
         treePrinter.printTree(binarySearchTree.getRoot());
     }
 
@@ -28,9 +34,11 @@ public class TreePrinter<T> {
         return returnString.toString();
     }
 
-    public TreePrinter(String nullString, Function<Node<T>, String> toString) {
+    public TreePrinter(String nullString, Function<Node<T>, String> toString, String startSeparator, String endSeparator) {
         this.nullString = nullString;
         this.toString = toString;
+        this.startSeparator = startSeparator;
+        this.endSeparator = endSeparator;
     }
 
     public void printTree(Node<T> root) {
@@ -56,12 +64,31 @@ public class TreePrinter<T> {
             }
             treeString.add(layerString);
         }
+        if (startSeparator != null  && treeString.size() > 0) {
+            StringBuilder start = new StringBuilder();
+            for (int i = 0 ; i < treeString.get(0).size(); i++) {
+                for (int j = 0; j <= treeString.get(0).get(i).length(); j++) {
+                    start.append(startSeparator);
+                }
+            }
+            System.out.println(start);
+        }
         for (int i = treeString.size() - 1; i >= 0; i--) {
             List<String> layerList = treeString.get(i);
             for (int j = 0; j < layerList.size(); j++) {
                 System.out.print(layerList.get(j));
             }
+            if (i != 0) System.out.println();
+        }
+        if (endSeparator != null && treeString.size() > 0) {
+            StringBuilder end = new StringBuilder();
+            for (int i = 0 ; i < treeString.get(0).size(); i++) {
+                for (int j = 0; j <= treeString.get(0).get(i).length(); j++) {
+                    end.append(endSeparator);
+                }
+            }
             System.out.println();
+            System.out.println(end);
         }
     }
 

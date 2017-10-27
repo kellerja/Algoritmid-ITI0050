@@ -110,9 +110,11 @@ public class HW01Test {
         Random random = new Random();
         Dancer dancer;
         Dancer expected;
+        int malesCreated = 0, femalesCreated = 0;
         for (int i = 0; i < 10000; i++) {
-            if (random.nextInt(100) >= 50) {
-                dancer = createDancer(i, MALE, random.nextInt(200) + 1);
+            if (random.nextInt(100) >= 49) {
+                malesCreated++;
+                dancer = createDancer(i, MALE, random.nextInt(30) + 100);
                 expected = getExpectedResultForMale(dancer, females);
                 if (expected != null) {
                     females.remove(expected);
@@ -120,7 +122,8 @@ public class HW01Test {
                     males.add(dancer);
                 }
             } else {
-                dancer = createDancer(i, FEMALE, random.nextInt(200) + 1);
+                femalesCreated++;
+                dancer = createDancer(i, FEMALE, random.nextInt(30) + 1);
                 expected = getExpectedResultForFemale(dancer, males);
                 if (expected != null) {
                     males.remove(expected);
@@ -166,6 +169,7 @@ public class HW01Test {
         assertEquals(females.size(), hw.getFemaleSearchTree().toList().size());
         List<Dancer> waitingList = hw.returnWaitingList();
         assertEquals(males.size() + females.size(), waitingList.size());
+        System.out.println("Generated " + malesCreated + " males and " + femalesCreated + " females. Ratio males " + ((float)malesCreated/(malesCreated + femalesCreated)) + " and females " + ((float)femalesCreated/(malesCreated + femalesCreated)));
         System.out.println("END SIZE " + waitingList.size());
         for (Dancer dancerWaiting: waitingList) {
             if (dancerWaiting.getGender() == MALE) {
