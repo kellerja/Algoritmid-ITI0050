@@ -214,11 +214,7 @@ public class AL04 {
             insertOrder.add(i);
         }
 
-        for (int i = 0; i < 200; i++) {
-            searchOrder.add(i + 500);
-        }
-
-        for (int i = 0; i < 4500; i++) {
+        for (int i = 0; i < 700; i++) {
             deleteMin.add(true);
         }
 
@@ -280,7 +276,7 @@ public class AL04 {
             insertOrder.add(i);
         }
 
-        for (int i = 2000; i < 5000; i++) {
+        for (int i = 2000; i < 5000; i+= 3)  {
             deleteOrder.add(i);
         }
         // Example can be found in the 'priorityQueueIsBestWhen' method or in 'ained.ttu.ee'.
@@ -313,6 +309,10 @@ public class AL04 {
 
         for (int i = 0; i < 5000; i+=2) {
             searchOrder.add(i);
+        }
+
+        for (int i = 0; i < 5000; i+=2) {
+            deleteOrder.add(i);
         }
         // Example can be found in the 'priorityQueueIsBestWhen' method or in 'ained.ttu.ee'.
 
