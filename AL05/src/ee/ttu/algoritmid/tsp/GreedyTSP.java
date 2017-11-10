@@ -1,8 +1,6 @@
 package ee.ttu.algoritmid.tsp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.IntStream;
 
 public class GreedyTSP {
@@ -13,13 +11,23 @@ public class GreedyTSP {
         int length, bestLength = Integer.MAX_VALUE;
         for (int i = 0; i < adjacencyMatrix.length; i++) {
             route = findRouteFrom(i, adjacencyMatrix);
-            length = IntStream.of(route).sum();
+            length = getRouteDistance(route, adjacencyMatrix);
             if (length < bestLength) {
                 bestLength = length;
                 bestRoute = route;
             }
         }
         return bestRoute;
+    }
+
+    private static int getRouteDistance(int[] route, int[][] adjacencyMatrix) {
+        int source, dest, length = 0;
+        for (int j = 0; j < route.length - 1; j++) {
+            source = route[j];
+            dest = route[j + 1];
+            length += adjacencyMatrix[source][dest];
+        }
+        return length;
     }
 
     private static int[] findRouteFrom(int startIdx, int[][] adjacencyMatrix) {
@@ -50,11 +58,13 @@ public class GreedyTSP {
 
     public static void main(String[] args) {
         int[][] matrix = new int[][]{
-                {0, 4, 1, 2},
-                {3, 0, 5, 6},
-                {2, 6, 0, 9},
-                {4, 6, 9, 0}
+                {0, 7, 4, 2, 1},
+                {3, 0, 5, 6, 1},
+                {2, 6, 0, 9, 4},
+                {4, 6, 9, 0, 5},
+                {2, 9, 5, 1, 0}
         };
         System.out.println(Arrays.toString(GreedyTSP.greedySolution(matrix)));
+        int[][] m2 = new int[20][20];
     }
 }
