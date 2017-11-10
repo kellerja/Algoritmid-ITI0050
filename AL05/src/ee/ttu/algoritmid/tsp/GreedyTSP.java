@@ -1,41 +1,33 @@
 package ee.ttu.algoritmid.tsp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class GreedyTSP {
 
-    private static int getBestChoice(int node, int[] neighbours, int[] visited) {
-        int best = (node + 1) % neighbours.length;
-        for (int i = neighbours.length - 1; i >= 0; i--) {
-            if (neighbours[i] > 0 && !contains(i, visited) && neighbours[best] > neighbours[i]) {
-                best = i;
-            }
-        }
-        return best;
-    }
-
-    private static boolean contains(int node, int[] visited) {
-        for (int n: visited) {
-            if (node == n) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /* Greedy search */
     public static int[] greedySolution(int[][] adjacencyMatrix) {
-        int[] visited = new int[adjacencyMatrix.length + 1];
-        int currentNode = 0;
-        int nextNode;
+        int bestDist = Integer.MAX_VALUE;
+        List<Integer> visited = new ArrayList<>();
+        int[] bestPath = new int[adjacencyMatrix.length + 1];
+        int current = 0;
         for (int i = 0; i < adjacencyMatrix.length; i++) {
-            visited[i] = currentNode;
-            nextNode = getBestChoice(currentNode, adjacencyMatrix[i], visited);
-            currentNode = nextNode;
+            int tempBest = -1;
+            visited.add(current);
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                int distance = adjacencyMatrix[current][j];
+                if (current != j && distance < bestDist && !visited.contains(j)) {
+                    tempBest = j;
+                }
+            }
+            current = tempBest;
         }
-        visited[adjacencyMatrix.length - 1] = currentNode;
-        visited[adjacencyMatrix.length] = visited[0];
-        return visited;
+        for (int i = 0; i < visited.size(); i++) {
+            bestPath[i] = visited.get(i);
+        }
+        bestPath[adjacencyMatrix.length] = visited.get(0);
+        return bestPath;
     }
 
     public static void main(String[] args) {
