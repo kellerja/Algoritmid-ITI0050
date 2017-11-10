@@ -15,7 +15,7 @@ public class GreedyTSP {
             int tempBest = -1;
             int bestDist = Integer.MAX_VALUE;
             visited.add(current);
-            for (int j = adjacencyMatrix.length - 1; j >= 0; j--) {
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
                 int distance = adjacencyMatrix[current][j];
                 if (current != j && distance < bestDist && !visited.contains(j)) {
                     bestDist = distance;
