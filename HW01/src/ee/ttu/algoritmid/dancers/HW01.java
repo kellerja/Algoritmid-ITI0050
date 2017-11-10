@@ -18,7 +18,7 @@ public class HW01 implements Dancers {
     private final TriPredicate<Dancer> maleBestMatchPredicate;
     private final TriPredicate<Dancer> femaleBestMatchPredicate;
 
-    
+
     public HW01() {
         Comparator<Dancer> insertComparator = Comparator.comparingInt(Dancer::getHeight);
         Function<Node<Dancer>, String> toString = node ->
