@@ -6,7 +6,7 @@ public class GreedyTSP {
 
     private static int getBestChoice(int node, int[] neighbours, int[] visited) {
         int best = (node + 1) % neighbours.length;
-        for (int i = 0; i < neighbours.length; i++) {
+        for (int i = neighbours.length - 1; i >= 0; i--) {
             if (neighbours[i] > 0 && !contains(i, visited) && neighbours[best] > neighbours[i]) {
                 best = i;
             }
