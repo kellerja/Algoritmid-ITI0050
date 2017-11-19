@@ -65,6 +65,9 @@ public class GreedyTSP {
                 {2, 9, 5, 1, 0}
         };
         System.out.println(Arrays.toString(GreedyTSP.greedySolution(matrix)));
-        int[][] m2 = new int[20][20];
+        int[][] m2 = new int[][]{
+                {5}
+        };
+        System.out.println(Arrays.toString(GreedyTSP.greedySolution(m2)));
     }
 }

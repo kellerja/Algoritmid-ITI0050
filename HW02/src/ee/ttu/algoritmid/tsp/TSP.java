@@ -44,8 +44,10 @@ public class TSP {
 
     /* Depth first search */
     public List<Integer> depthFirst(int[][] adjacencyMatrix) {
-        Stack<NodeStorage> stack = new Stack<>();
         checkedNodesCount = BigInteger.ONE;
+        if (adjacencyMatrix.length < 1) return new ArrayList<>();
+        if (adjacencyMatrix.length < 2) return Collections.singletonList(0);
+        Stack<NodeStorage> stack = new Stack<>();
         boolean[] visited = new boolean[adjacencyMatrix.length];
         Integer[] bestPath = greedySolution(adjacencyMatrix);
         int bestDistance = getRouteDistance(bestPath, adjacencyMatrix);
@@ -86,8 +88,10 @@ public class TSP {
 
     /* Best first search */
     public List<Integer> bestFirst(int[][] adjacencyMatrix) {
-        Queue<NodeStorage> queue = new PriorityQueue<>();
         checkedNodesCount = BigInteger.ONE;
+        if (adjacencyMatrix.length < 1) return new ArrayList<>();
+        if (adjacencyMatrix.length < 2) return Collections.singletonList(0);
+        Queue<NodeStorage> queue = new PriorityQueue<>();
         boolean[] visited = new boolean[adjacencyMatrix.length];
         Integer[] bestPath = greedySolution(adjacencyMatrix);
         int bestDistance = getRouteDistance(bestPath, adjacencyMatrix);
@@ -204,10 +208,7 @@ public class TSP {
 
     public static void main(String[] args) {
         int[][] matrix = {
-                {0, 6, 4, 2},
-                {6, 0, 3, 4},
-                {4, 3, 0, 5},
-                {2, 4, 5, 0}
+                {0}
         };
         TSP tsp = new TSP();
         System.out.println("GREEDY");
