@@ -47,20 +47,24 @@ public class TSP {
         checkedNodesCount = BigInteger.ONE;
         if (adjacencyMatrix.length < 1) return new ArrayList<>();
         if (adjacencyMatrix.length < 2) return Collections.singletonList(0);
+        return depthFirstWithRoot(0, adjacencyMatrix);
+    }
+
+    private List<Integer> depthFirstWithRoot(int rootNode, int[][] adjacencyMatrix) {
         Stack<NodeStorage> stack = new Stack<>();
         boolean[] visited = new boolean[adjacencyMatrix.length];
         Integer[] bestPath = greedySolution(adjacencyMatrix);
         int bestDistance = getRouteDistance(bestPath, adjacencyMatrix);
         Integer[] currentPath = new Integer[adjacencyMatrix.length + 1];
         Arrays.fill(currentPath, -1);
-        currentPath[0] = 0;
-        visited[0] = true;
-        stack.add(new NodeStorage(0, bound(adjacencyMatrix), 0, currentPath, visited));
+        currentPath[0] = rootNode;
+        visited[rootNode] = true;
+        stack.add(new NodeStorage(rootNode, bound(adjacencyMatrix), 0, currentPath, visited));
         while (!stack.isEmpty()) {
             NodeStorage currentElement = stack.pop();
             int[] neighbours = adjacencyMatrix[currentElement.node];
             visited = currentElement.visited;
-            if (currentElement.bound > bestDistance) break;
+            if (currentElement.bound > bestDistance) continue;
             for (int i = 0; i < neighbours.length; i++) {
                 if (neighbours[i] == 0 || visited[i]) continue;
                 checkedNodesCount = checkedNodesCount.add(BigInteger.ONE);
@@ -208,7 +212,12 @@ public class TSP {
 
     public static void main(String[] args) {
         int[][] matrix = {
-                {0}
+                {0, 6, 4, 9, 3, 5},
+                {6, 0, 3, 4, 8, 1},
+                {4, 3, 0, 5, 2, 2},
+                {2, 4, 5, 0, 9, 5},
+                {3, 9, 4, 6, 0, 8},
+                {2, 5, 8, 4, 2, 0}
         };
         TSP tsp = new TSP();
         System.out.println("GREEDY");
