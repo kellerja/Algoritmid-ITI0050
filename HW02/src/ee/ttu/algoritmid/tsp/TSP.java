@@ -211,32 +211,39 @@ public class TSP {
     }
 
     public static void main(String[] args) {
-        int[][] matrix = {
-                {0, 6, 4, 9, 3, 5},
-                {6, 0, 3, 4, 8, 1},
-                {4, 3, 0, 5, 2, 2},
-                {2, 4, 5, 0, 9, 5},
-                {3, 9, 4, 6, 0, 8},
-                {2, 5, 8, 4, 2, 0}
-        };
+        int[][] matrix = new int[0][];
+        try {
+            matrix = MatrixLoader.loadFile("eesti.in", 15);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         TSP tsp = new TSP();
         System.out.println("GREEDY");
+        long startTime = System.nanoTime();
         Integer[] solution = TSP.greedySolution(matrix);
+        long endTime = System.nanoTime();
         Arrays.stream(solution).forEach(node -> System.out.print(node + " "));
         System.out.println();
         System.out.println("Distance " + getRouteDistance(solution, matrix));
+        System.out.println("Time " + ((endTime - startTime) * 1e-9) + " sec");
         System.out.println("DEPTH FIRST");
+        startTime = System.nanoTime();
         List<Integer> route = tsp.depthFirst(matrix);
+        endTime = System.nanoTime();
         System.out.println(route);
         System.out.println("Distance " + getRouteDistance(route.toArray(new Integer[route.size()]), matrix));
         BigInteger maxNodes = getNumberOfNodes(matrix.length);
         BigDecimal ratio = new BigDecimal(tsp.getCheckedNodesCount(), 2).divide(new BigDecimal(maxNodes, 2), BigDecimal.ROUND_HALF_EVEN);
         System.out.println("Num of viewed nodes " + tsp.getCheckedNodesCount() + " of " + maxNodes + " ratio " + ratio);
+        System.out.println("Time " + ((endTime - startTime) * 1e-9) + " sec");
         System.out.println("BEST FIRST");
+        startTime = System.nanoTime();
         route = tsp.bestFirst(matrix);
+        endTime = System.nanoTime();
         System.out.println(route);
         System.out.println("Distance " + getRouteDistance(route.toArray(new Integer[route.size()]), matrix));
         ratio = new BigDecimal(tsp.getCheckedNodesCount(), 2).divide(new BigDecimal(maxNodes, 2), BigDecimal.ROUND_HALF_EVEN);
         System.out.println("Num of viewed nodes " + tsp.getCheckedNodesCount() + " of " + maxNodes + " ratio " + ratio);
+        System.out.println("Time " + ((endTime - startTime) * 1e-9) + " sec");
     }
 }
