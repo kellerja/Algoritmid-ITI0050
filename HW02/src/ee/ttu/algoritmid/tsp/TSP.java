@@ -3,7 +3,6 @@ package ee.ttu.algoritmid.tsp;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class TSP {
 
@@ -54,12 +53,14 @@ public class TSP {
         Stack<NodeStorage> stack = new Stack<>();
         boolean[] visited = new boolean[adjacencyMatrix.length];
         Integer[] bestPath = greedySolution(adjacencyMatrix);
+        int[] minimumOutgoingConnections = getOutgoingMinimumVector(adjacencyMatrix);
+        int[] minimumIncomingConnections = getIncomingMinimumVector(adjacencyMatrix);
         int bestDistance = getRouteDistance(bestPath, adjacencyMatrix);
         Integer[] currentPath = new Integer[adjacencyMatrix.length + 1];
         Arrays.fill(currentPath, -1);
         currentPath[0] = rootNode;
         visited[rootNode] = true;
-        stack.add(new NodeStorage(rootNode, bound(adjacencyMatrix), 0, currentPath, visited));
+        stack.add(new NodeStorage(rootNode, bound(minimumIncomingConnections, minimumOutgoingConnections), 0, currentPath, visited));
         while (!stack.isEmpty()) {
             NodeStorage currentElement = stack.pop();
             int[] neighbours = adjacencyMatrix[currentElement.node];
@@ -70,7 +71,7 @@ public class TSP {
                 checkedNodesCount = checkedNodesCount.add(BigInteger.ONE);
                 Integer[] path = currentElement.path;
                 visited[i] = true;
-                int priorityValue = currentElement.bound - Arrays.stream(adjacencyMatrix[path[currentElement.nodeNumber]]).filter(weight -> weight != 0).min().getAsInt() + adjacencyMatrix[path[currentElement.nodeNumber]][i];
+                int priorityValue = currentElement.bound - minimumOutgoingConnections[currentElement.node] + adjacencyMatrix[path[currentElement.nodeNumber]][i];
                 int nodeNumber = currentElement.nodeNumber + 1;
                 path[nodeNumber] = i;
                 if (nodeNumber == adjacencyMatrix.length - 1) {
@@ -97,13 +98,15 @@ public class TSP {
         if (adjacencyMatrix.length < 2) return Collections.singletonList(0);
         Queue<NodeStorage> queue = new PriorityQueue<>();
         boolean[] visited = new boolean[adjacencyMatrix.length];
+        int[] minimumOutgoingConnections = getOutgoingMinimumVector(adjacencyMatrix);
+        int[] minimumIncomingConnections = getIncomingMinimumVector(adjacencyMatrix);
         Integer[] bestPath = greedySolution(adjacencyMatrix);
         int bestDistance = getRouteDistance(bestPath, adjacencyMatrix);
         Integer[] currentPath = new Integer[adjacencyMatrix.length + 1];
         Arrays.fill(currentPath, -1);
         currentPath[0] = 0;
         visited[0] = true;
-        queue.add(new NodeStorage(0, bound(adjacencyMatrix), 0, currentPath, visited));
+        queue.add(new NodeStorage(0, bound(minimumIncomingConnections, minimumOutgoingConnections), 0, currentPath, visited));
         while (!queue.isEmpty()) {
             NodeStorage currentElement = queue.poll();
             int[] neighbours = adjacencyMatrix[currentElement.node];
@@ -114,7 +117,7 @@ public class TSP {
                 checkedNodesCount = checkedNodesCount.add(BigInteger.ONE);
                 Integer[] path = currentElement.path;
                 visited[i] = true;
-                int priorityValue = currentElement.bound - Arrays.stream(adjacencyMatrix[path[currentElement.nodeNumber]]).filter(weight -> weight != 0).min().getAsInt() + adjacencyMatrix[path[currentElement.nodeNumber]][i];
+                int priorityValue = currentElement.bound - minimumOutgoingConnections[currentElement.node] + adjacencyMatrix[path[currentElement.nodeNumber]][i];
                 int nodeNumber = currentElement.nodeNumber + 1;
                 path[nodeNumber] = i;
                 if (nodeNumber == adjacencyMatrix.length - 1) {
@@ -139,12 +142,31 @@ public class TSP {
         return checkedNodesCount;
     }
 
-    private int bound(int[][] adjacencyMatrix) {
+    private int bound(int[] incomingMinimums, int[] outgoingMinimums) {
         int bound = 0;
-        for (int i = 0; i < adjacencyMatrix.length; i++) {
-            bound += IntStream.of(adjacencyMatrix[i]).filter(weight -> weight != 0).min().getAsInt();
+        for (int i = 0; i < incomingMinimums.length; i++) {
+            bound += incomingMinimums[i] + outgoingMinimums[i];
         }
-        return bound;
+        return bound / 2;
+    }
+    
+    private int[] getOutgoingMinimumVector(int[][] adjacencyMatrix) {
+        int[] minimums = new int[adjacencyMatrix.length];
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            minimums[i] = Arrays.stream(adjacencyMatrix[i]).filter(weight -> weight != 0).min().getAsInt();
+        }
+        return minimums;
+    }
+
+    private int[] getIncomingMinimumVector(int[][] adjacencyMatrix) {
+        int[] minimums = new int[adjacencyMatrix.length];
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                if (adjacencyMatrix[i][j] == 0) continue;
+                minimums[j] = minimums[j] == 0 ? adjacencyMatrix[i][j] : Math.min(minimums[j], adjacencyMatrix[i][j]);
+            }
+        }
+        return minimums;
     }
 
     private static Integer[] greedySolution(int[][] adjacencyMatrix) {
