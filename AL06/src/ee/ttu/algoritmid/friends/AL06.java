@@ -69,7 +69,7 @@ public class AL06 {
                 for (Integer neighbour: getGraph().get(currentPath.get(currentPath.size() - 1))) {
                     if (!visited.contains(neighbour)) {
                         currentPath.add(neighbour);
-                        if (neighbour.equals(goal)) return new SimpleEntry<>(start, currentPath);
+                        if (neighbour.equals(goal)) return new SimpleEntry<>(currentPath.size(), currentPath);
                         queue.add(new ArrayList<>(currentPath));
                         visited.add(neighbour);
                         currentPath.remove(neighbour);
@@ -106,16 +106,20 @@ public class AL06 {
         friends.add(new SimpleEntry<>(1, 3));
         friends.add(new SimpleEntry<>(4, 9));
         friends.add(new SimpleEntry<>(0, 5));
+        friends.add(new SimpleEntry<>(2, 12));
+        friends.add(new SimpleEntry<>(13, 14));
+        friends.add(new SimpleEntry<>(222, 55));
+        friends.add(new SimpleEntry<>(55, 44));
         friends.add(new SimpleEntry<>(7, 0));
         friends.add(new SimpleEntry<>(9, 1));
         friends.add(new SimpleEntry<>(8, 1));
         friends.add(new SimpleEntry<>(2, 4));
         AL06 al06 = new AL06();
-        SimpleEntry<Integer, List<Integer>> result = al06.buildGraphAndFindLink(friends, new SimpleEntry<Integer, Integer>(4, 9));
+        SimpleEntry<Integer, List<Integer>> result = al06.buildGraphAndFindLink(friends, new SimpleEntry<Integer, Integer>(2, 0));
         if (result == null) {
             System.out.println("NULL");
         } else {
-            System.out.println("Start " + result.getKey() + " path " + result.getValue());
+            System.out.println("Length " + result.getKey() + " path " + result.getValue());
         }
     }
 }
