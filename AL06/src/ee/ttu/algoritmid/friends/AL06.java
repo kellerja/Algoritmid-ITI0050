@@ -64,7 +64,7 @@ public class AL06 {
             visited[start] = true;
             queue.add(path);
             while (!queue.isEmpty()) {
-                List<Integer> currentPath = queue.poll();
+                List<Integer> currentPath = new ArrayList<>(queue.poll());
                 for (Integer neighbour: getGraph().get(currentPath.get(currentPath.size() - 1))) {
                     if (!visited[neighbour]) {
                         currentPath.add(neighbour);
@@ -91,9 +91,10 @@ public class AL06 {
      */
     public SimpleEntry<Integer, List<Integer>> buildGraphAndFindLink(List<SimpleEntry<Integer, Integer>> friends,
                                                                      SimpleEntry<Integer, Integer> pair) {
-
-        // TODO
-
-        return null;
+        UndirectedGraph graph = new UndirectedGraph();
+        for (SimpleEntry<Integer, Integer> friendPair: friends) {
+            graph.addEdge(friendPair.getKey(), friendPair.getValue());
+        }
+        return graph.breadthFirstSearch(pair.getKey(), pair.getValue());
     }
 }
