@@ -2,6 +2,7 @@ package ee.ttu.algoritmid.friends;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.Collectors;
 
 public class AL06 {
     public UndirectedGraph graph = new UndirectedGraph();
@@ -64,13 +65,14 @@ public class AL06 {
             Queue<List<Integer>> queue = new LinkedList<>();
             queue.add(path);
             while (!queue.isEmpty()) {
-                List<Integer> currentPath = new ArrayList<>(queue.poll());
+                List<Integer> currentPath = queue.poll();
                 for (Integer neighbour: getGraph().get(currentPath.get(currentPath.size() - 1))) {
                     if (!visited.contains(neighbour)) {
                         currentPath.add(neighbour);
                         if (neighbour.equals(goal)) return new SimpleEntry<>(start, currentPath);
-                        queue.add(currentPath);
+                        queue.add(new ArrayList<>(currentPath));
                         visited.add(neighbour);
+                        currentPath.remove(neighbour);
                     }
                 }
             }
