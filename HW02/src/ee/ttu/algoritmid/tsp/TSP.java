@@ -149,7 +149,7 @@ public class TSP {
         }
         return bound / 2;
     }
-    
+
     private int[] getOutgoingMinimumVector(int[][] adjacencyMatrix) {
         int[] minimums = new int[adjacencyMatrix.length];
         for (int i = 0; i < adjacencyMatrix.length; i++) {
@@ -235,7 +235,7 @@ public class TSP {
     public static void main(String[] args) {
         int[][] matrix = new int[0][];
         try {
-            matrix = MatrixLoader.loadFile("eesti.in", 15);
+            matrix = MatrixLoader.loadFile("eesti.in", 10);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,7 +255,7 @@ public class TSP {
         System.out.println(route);
         System.out.println("Distance " + getRouteDistance(route.toArray(new Integer[route.size()]), matrix));
         BigInteger maxNodes = getNumberOfNodes(matrix.length);
-        BigDecimal ratio = new BigDecimal(tsp.getCheckedNodesCount(), 2).divide(new BigDecimal(maxNodes, 2), BigDecimal.ROUND_HALF_EVEN);
+        BigDecimal ratio = new BigDecimal(tsp.getCheckedNodesCount(), 6).divide(new BigDecimal(maxNodes, 6), BigDecimal.ROUND_HALF_EVEN);
         System.out.println("Num of viewed nodes " + tsp.getCheckedNodesCount() + " of " + maxNodes + " ratio " + ratio);
         System.out.println("Time " + ((endTime - startTime) * 1e-9) + " sec");
         System.out.println("BEST FIRST");
@@ -264,7 +264,7 @@ public class TSP {
         endTime = System.nanoTime();
         System.out.println(route);
         System.out.println("Distance " + getRouteDistance(route.toArray(new Integer[route.size()]), matrix));
-        ratio = new BigDecimal(tsp.getCheckedNodesCount(), 2).divide(new BigDecimal(maxNodes, 2), BigDecimal.ROUND_HALF_EVEN);
+        ratio = new BigDecimal(tsp.getCheckedNodesCount(), 6).divide(new BigDecimal(maxNodes, 6), BigDecimal.ROUND_HALF_EVEN);
         System.out.println("Num of viewed nodes " + tsp.getCheckedNodesCount() + " of " + maxNodes + " ratio " + ratio);
         System.out.println("Time " + ((endTime - startTime) * 1e-9) + " sec");
     }
