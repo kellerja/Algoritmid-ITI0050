@@ -57,20 +57,20 @@ public class AL06 {
          *                    (some tests only check for number of nodes)
          */
         public SimpleEntry<Integer, List<Integer>> breadthFirstSearch(Integer start, Integer goal) {
-            boolean[] visited = new boolean[getGraph().size()];
+            List<Integer> visited = new ArrayList<>();
             List<Integer> path = new ArrayList<>();
+            visited.add(start);
             path.add(start);
             Queue<List<Integer>> queue = new LinkedList<>();
-            visited[start] = true;
             queue.add(path);
             while (!queue.isEmpty()) {
                 List<Integer> currentPath = new ArrayList<>(queue.poll());
                 for (Integer neighbour: getGraph().get(currentPath.get(currentPath.size() - 1))) {
-                    if (!visited[neighbour]) {
+                    if (!visited.contains(neighbour)) {
                         currentPath.add(neighbour);
                         if (neighbour.equals(goal)) return new SimpleEntry<>(start, currentPath);
                         queue.add(currentPath);
-                        visited[neighbour] = true;
+                        visited.add(neighbour);
                     }
                 }
             }
@@ -96,5 +96,24 @@ public class AL06 {
             graph.addEdge(friendPair.getKey(), friendPair.getValue());
         }
         return graph.breadthFirstSearch(pair.getKey(), pair.getValue());
+    }
+
+    public static void main(String[] args) {
+        List<SimpleEntry<Integer, Integer>> friends = new ArrayList<>();
+        friends.add(new SimpleEntry<>(4, 7));
+        friends.add(new SimpleEntry<>(1, 3));
+        friends.add(new SimpleEntry<>(4, 9));
+        friends.add(new SimpleEntry<>(0, 5));
+        friends.add(new SimpleEntry<>(7, 0));
+        friends.add(new SimpleEntry<>(9, 1));
+        friends.add(new SimpleEntry<>(8, 1));
+        friends.add(new SimpleEntry<>(2, 4));
+        AL06 al06 = new AL06();
+        SimpleEntry<Integer, List<Integer>> result = al06.buildGraphAndFindLink(friends, new SimpleEntry<Integer, Integer>(4, 9));
+        if (result == null) {
+            System.out.println("NULL");
+        } else {
+            System.out.println("Start " + result.getKey() + " path " + result.getValue());
+        }
     }
 }
