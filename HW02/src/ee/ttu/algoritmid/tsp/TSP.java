@@ -235,7 +235,7 @@ public class TSP {
     public static void main(String[] args) {
         int[][] matrix = new int[0][];
         try {
-            matrix = MatrixLoader.loadFile("eesti.in", 15);
+            matrix = MatrixLoader.loadFile("eesti.in", 20);
         } catch (Exception e) {
             e.printStackTrace();
         }
