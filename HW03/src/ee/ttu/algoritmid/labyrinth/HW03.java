@@ -6,15 +6,33 @@ import java.net.URISyntaxException;
 
 public class HW03 {
     private MazeRunner mazeRunner;
-    private String[][] maze;
-    private int[][] graphTemp;
-    private List<List<Integer>> graph;
+    private String[][] graphTemp;
+    private Map<String, List<Node>> graph;
     private AbstractMap.SimpleEntry<Integer, Integer> start;
     private AbstractMap.SimpleEntry<Integer, Integer> end;
-    private int nodeIdx;
 
     public HW03(String fileName) throws IOException, URISyntaxException {
         mazeRunner = new MazeRunner(fileName);
+    }
+
+    class Node {
+        private final int weight;
+        private final String id;
+
+        private Node(String id, int weight) {
+            this.weight = weight;
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + id + " " + weight + ")";
+        }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode();
+        }
     }
 
     private enum Heading {
@@ -66,91 +84,110 @@ public class HW03 {
      *          return null if there is no path (there is no way to get to the treasure).
      */
     public List<String> solve() {
-        maze = new String[mazeRunner.getSize().getKey()][mazeRunner.getSize().getValue()];
         start = mazeRunner.getPosition();
-        nodeIdx = 0;
-        maze[start.getValue()][start.getKey()] = "B";
-        graph = new ArrayList<>();
-        graph.add(new ArrayList<>());
-        graph.get(0).add(0);
-        graphTemp = new int[mazeRunner.getSize().getKey()][mazeRunner.getSize().getValue()];
-        for (int[] g: graphTemp) {
-            Arrays.fill(g, -1);
-        }
-        graphTemp[start.getValue()][start.getKey()] = nodeIdx++;
-        mapMaze("0");
-        System.out.println(nodeIdx);
-        for (String[] row : maze) {
+        graph = new HashMap<>();
+        graph.put(getNodeId(start), new ArrayList<>());
+        graphTemp = new String[mazeRunner.getSize().getKey()][mazeRunner.getSize().getValue()];
+        graphTemp[start.getValue()][start.getKey()] = getNodeId(start);
+        mapMaze();
+        for (String[] row : graphTemp) {
             for (String value: row) {
-                if (value == null) value = "#";
-                System.out.print(value + " ");
+                if (value == null) value = "###";
+                System.out.print(value + "  ");
             }
             System.out.println();
         }
         System.out.println();
-        for (int[] row : graphTemp) {
-            for (int value: row) {
-                if (value == -1) System.out.print("#\t");
-                else System.out.print(value + "\t");
-            }
-            System.out.println();
+        for (String node: graph.keySet()) {
+            System.out.println(node + "=" + graph.get(node));
         }
-        System.out.println();
-        for (int i = 0; i < graph.size(); i++) {
-            System.out.println(i + " " + graph.get(i));
-        }
+        dijkstra();
         return null;
     }
 
-    private void mapMaze(String prevNodeValue) {
+    private void dijkstra() {
+        Map<String, String> touch = new HashMap<>();
+        Map<String, Integer> distance = new HashMap<>();
+        Map<String, Boolean> selected = new HashMap<>();
+        for (String node: graph.keySet()) {
+            if (node.equals(getNodeId(start))) continue;
+            touch.put(node, getNodeId(start));
+            distance.put(node, Integer.MAX_VALUE);
+        }
+        for (Node neighbour: graph.get(getNodeId(start))) {
+            distance.put(neighbour.id, neighbour.weight);
+        }
+        String vnear = null;
+        for (int i = 0; i < graph.size(); i++) {
+            int min = Integer.MAX_VALUE;
+            for (String node: graph.keySet()) {
+                if (node.equals(getNodeId(start))) continue;
+                if (distance.get(node) < min && !selected.getOrDefault(node, false)) {
+                    min = distance.get(node);
+                    vnear = node;
+                }
+            }
+            for (String node: graph.keySet()) {
+                if (node.equals(getNodeId(start))) continue;
+                Optional<Node> nodeFromVnearOptional = graph.get(vnear).stream().filter(n -> n.id.equals(node)).findAny();
+                if (!nodeFromVnearOptional.isPresent()) {
+                    continue;
+                }
+                Node nodeFromVnear = nodeFromVnearOptional.get();
+                if (distance.get(vnear) + nodeFromVnear.weight < distance.get(nodeFromVnear.id)) {
+                    distance.put(node, distance.get(vnear) + nodeFromVnear.weight);
+                    touch.put(node, vnear);
+                }
+            }
+            selected.put(vnear, true);
+        }
+        System.out.println(touch);
+        String node = getNodeId(end);
+        while (!node.equals(getNodeId(start))) {
+            System.out.println(node);
+            node = touch.get(node);
+        }
+        System.out.println(getNodeId(start));
+    }
+
+    private void mapMaze() {
         List<List<String>> scanResult = mazeRunner.scanAsString();
         AbstractMap.SimpleEntry<Integer, Integer> position, nextPosition;
         for (Heading heading: Heading.oppositeHeading.keySet()) {
             if (!isNotVisited(heading) && !heading.getNodeString(scanResult).equals("#") && !heading.getNodeString(scanResult).equals("X")) {
                 position = mazeRunner.getPosition();
                 nextPosition = heading.move(position);
-                Integer nodeIdx = graphTemp[position.getValue()][position.getKey()];
-                Integer nextNodeIdx = graphTemp[nextPosition.getValue()][nextPosition.getKey()];
-                String node = scanResult.get(1).get(1);
-                if (node.equals("T")) node = "-2";
-                else if (node.equals("B")) node = "0";
-                graph.get(nextNodeIdx).set(nodeIdx, Integer.parseInt(node));
                 String nextNode = heading.getNodeString(scanResult);
                 if (nextNode.equals("T")) nextNode = "-2";
                 else if (nextNode.equals("B")) nextNode = "0";
-                graph.get(nodeIdx).set(nextNodeIdx, Integer.parseInt(nextNode));
+                graph.get(getNodeId(position)).add(new Node(getNodeId(nextPosition), Integer.parseInt(nextNode)));
             }
             if (isNotVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
-                maze[position.getValue()][position.getKey()] = heading.getNodeString(scanResult);
-                int node = nodeIdx++;
-                graphTemp[position.getValue()][position.getKey()] = node;
-                List<Integer> weights = new ArrayList<>();
-                for (int i = 0; i < graph.size(); i++) {
-                    weights.add(-1);
-                }
-                graph.add(weights);
-                for (int i = 0; i < graph.size(); i++) {
-                    graph.get(i).add(-1);
-                }
+                graphTemp[position.getValue()][position.getKey()] = getNodeId(position);
                 String weight = heading.getNodeString(scanResult);
                 if (heading.getNodeString(scanResult).equals("T")) {
                     end = position;
                     weight = "-2";
                 }
-                graph.get(node-1).add(node, Integer.parseInt(weight));
-                graph.get(node).add(node - 1, Integer.parseInt(prevNodeValue));
-                mapMaze(heading.getNodeString(scanResult));
+                AbstractMap.SimpleEntry<Integer, Integer> prevPos = Heading.oppositeHeading.get(heading).move(position);
+                graph.put(getNodeId(position), new ArrayList<>());
+                graph.get(getNodeId(prevPos)).add(new Node(getNodeId(position), Integer.parseInt(weight)));
+                mapMaze();
                 mazeRunner.move(Heading.oppositeHeading.get(heading).toString());
             }
         }
+    }
+
+    private String getNodeId(AbstractMap.SimpleEntry<Integer, Integer> position) {
+        return position.getKey() + "x" + position.getValue();
     }
 
     private boolean isNotVisited(Heading heading) {
         AbstractMap.SimpleEntry<Integer, Integer> newPos = heading.move(mazeRunner.getPosition());
         return newPos.getKey() < mazeRunner.getSize().getKey()
                 && newPos.getValue() < mazeRunner.getSize().getValue()
-                && maze[newPos.getValue()][newPos.getKey()] == null;
+                && !graph.containsKey(newPos.getKey() + "x" + newPos.getValue());
     }
 
     public static void main(String[] args) {
