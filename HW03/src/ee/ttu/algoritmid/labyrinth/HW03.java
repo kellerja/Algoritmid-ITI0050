@@ -78,7 +78,7 @@ public class HW03 {
             Arrays.fill(g, -1);
         }
         graphTemp[start.getValue()][start.getKey()] = nodeIdx++;
-        mapMaze();
+        mapMaze("0");
         System.out.println(nodeIdx);
         for (String[] row : maze) {
             for (String value: row) {
@@ -95,14 +95,30 @@ public class HW03 {
             }
             System.out.println();
         }
+        System.out.println();
+        for (int i = 0; i < graph.size(); i++) {
+            System.out.println(i + " " + graph.get(i));
+        }
         return null;
     }
 
-    private void mapMaze() {
+    private void mapMaze(String prevNodeValue) {
         List<List<String>> scanResult = mazeRunner.scanAsString();
-        AbstractMap.SimpleEntry<Integer, Integer> position;
+        AbstractMap.SimpleEntry<Integer, Integer> position, nextPosition;
         for (Heading heading: Heading.oppositeHeading.keySet()) {
-            if (!isNotVisited(heading)) {
+            if (!isNotVisited(heading) && !heading.getNodeString(scanResult).equals("#") && !heading.getNodeString(scanResult).equals("X")) {
+                position = mazeRunner.getPosition();
+                nextPosition = heading.move(position);
+                Integer nodeIdx = graphTemp[position.getValue()][position.getKey()];
+                Integer nextNodeIdx = graphTemp[nextPosition.getValue()][nextPosition.getKey()];
+                String node = scanResult.get(1).get(1);
+                if (node.equals("T")) node = "-2";
+                else if (node.equals("B")) node = "0";
+                graph.get(nextNodeIdx).set(nodeIdx, Integer.parseInt(node));
+                String nextNode = heading.getNodeString(scanResult);
+                if (nextNode.equals("T")) nextNode = "-2";
+                else if (nextNode.equals("B")) nextNode = "0";
+                graph.get(nodeIdx).set(nextNodeIdx, Integer.parseInt(nextNode));
             }
             if (isNotVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
@@ -111,15 +127,20 @@ public class HW03 {
                 graphTemp[position.getValue()][position.getKey()] = node;
                 List<Integer> weights = new ArrayList<>();
                 for (int i = 0; i < graph.size(); i++) {
-                    weights.add(0);
+                    weights.add(-1);
                 }
                 graph.add(weights);
                 for (int i = 0; i < graph.size(); i++) {
-                    graph.get(i).add(0);
+                    graph.get(i).add(-1);
                 }
-                graph.get(node-1).add(node, Integer.parseInt(heading.getNodeString(scanResult)));
-                if (heading.getNodeString(scanResult).equals("T")) end = position;
-                mapMaze();
+                String weight = heading.getNodeString(scanResult);
+                if (heading.getNodeString(scanResult).equals("T")) {
+                    end = position;
+                    weight = "-2";
+                }
+                graph.get(node-1).add(node, Integer.parseInt(weight));
+                graph.get(node).add(node - 1, Integer.parseInt(prevNodeValue));
+                mapMaze(heading.getNodeString(scanResult));
                 mazeRunner.move(Heading.oppositeHeading.get(heading).toString());
             }
         }
