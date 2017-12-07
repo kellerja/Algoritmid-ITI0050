@@ -59,6 +59,20 @@ public class HW03 {
             this.heading = heading;
         }
 
+        public static Heading movement(String fromNode, String toNode) {
+            int[] fromNodeCoordinates = Arrays.stream(fromNode.split("x")).mapToInt(Integer::parseInt).toArray();
+            int[] toNodeCoordinates = Arrays.stream(toNode.split("x")).mapToInt(Integer::parseInt).toArray();
+            int deltaX = toNodeCoordinates[0] - fromNodeCoordinates[0];
+            int deltaY = toNodeCoordinates[1] - fromNodeCoordinates[1];
+            switch (Integer.toString(deltaX) + Integer.toString(deltaY)) {
+                case ("0-1"): return NORTH;
+                case("10"): return EAST;
+                case ("01"): return SOUTH;
+                case ("-10"): return WEST;
+                default: return null;
+            }
+        }
+
         AbstractMap.SimpleEntry<Integer, Integer> move(AbstractMap.SimpleEntry<Integer, Integer> pos) {
             return new AbstractMap.SimpleEntry<>(pos.getKey() + deltaX, pos.getValue() + deltaY);
         }
@@ -71,6 +85,7 @@ public class HW03 {
         public String toString() {
             return heading;
         }
+
     }
 
     public MazeRunner getMazeRunner() {
@@ -93,19 +108,27 @@ public class HW03 {
         for (String[] row : graphTemp) {
             for (String value: row) {
                 if (value == null) value = "###";
-                System.out.print(value + "  ");
+                //System.out.print(value + "  ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println();
+        //System.out.println();
         for (String node: graph.keySet()) {
-            System.out.println(node + "=" + graph.get(node));
+            //System.out.println(node + "=" + graph.get(node));
         }
-        dijkstra();
-        return null;
+        Map<String, String> touch = dijkstra();
+        LinkedList<String> solution = new LinkedList<>();
+        String node = getNodeId(end);
+        String temp;
+        while (!node.equals(getNodeId(start))) {
+            temp = node;
+            node = touch.get(node);
+            solution.push(Objects.requireNonNull(Heading.movement(node, temp)).toString());
+        }
+        return solution;
     }
 
-    private void dijkstra() {
+    private Map<String, String> dijkstra() {
         Map<String, String> touch = new HashMap<>();
         Map<String, Integer> distance = new HashMap<>();
         Map<String, Boolean> selected = new HashMap<>();
@@ -141,13 +164,7 @@ public class HW03 {
             }
             selected.put(vnear, true);
         }
-        System.out.println(touch);
-        String node = getNodeId(end);
-        while (!node.equals(getNodeId(start))) {
-            System.out.println(node);
-            node = touch.get(node);
-        }
-        System.out.println(getNodeId(start));
+        return touch;
     }
 
     private void mapMaze() {
