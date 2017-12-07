@@ -105,6 +105,9 @@ public class HW03 {
         graphTemp = new String[mazeRunner.getSize().getKey()][mazeRunner.getSize().getValue()];
         graphTemp[start.getValue()][start.getKey()] = getNodeId(start);
         mapMaze();
+        if (end == null) {
+            return null;
+        }
         for (String[] row : graphTemp) {
             for (String value: row) {
                 if (value == null) value = "###";
