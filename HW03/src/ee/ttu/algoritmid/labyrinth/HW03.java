@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 
 public class HW03 {
     private MazeRunner mazeRunner;
-    private String[][] graphTemp;
     private Map<String, List<Node>> graph;
     private AbstractMap.SimpleEntry<Integer, Integer> start;
     private AbstractMap.SimpleEntry<Integer, Integer> end;
@@ -102,22 +101,9 @@ public class HW03 {
         start = mazeRunner.getPosition();
         graph = new HashMap<>();
         graph.put(getNodeId(start), new ArrayList<>());
-        graphTemp = new String[mazeRunner.getSize().getKey()][mazeRunner.getSize().getValue()];
-        graphTemp[start.getValue()][start.getKey()] = getNodeId(start);
         mapMaze();
         if (end == null) {
             return null;
-        }
-        for (String[] row : graphTemp) {
-            for (String value: row) {
-                if (value == null) value = "###";
-                //System.out.print(value + "  ");
-            }
-            //System.out.println();
-        }
-        //System.out.println();
-        for (String node: graph.keySet()) {
-            //System.out.println(node + "=" + graph.get(node));
         }
         Map<String, String> touch = dijkstra();
         LinkedList<String> solution = new LinkedList<>();
@@ -184,7 +170,6 @@ public class HW03 {
             }
             if (isNotVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
-                graphTemp[position.getValue()][position.getKey()] = getNodeId(position);
                 String weight = heading.getNodeString(scanResult);
                 if (heading.getNodeString(scanResult).equals("T")) {
                     end = position;
