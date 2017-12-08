@@ -9,7 +9,7 @@ public class Stamps {
     public static List<Integer> findStamps(int sum, List<Integer> stampOptions) throws IllegalArgumentException {
         if (stampOptions.isEmpty()) throw new IllegalArgumentException("Must provide stampOptions");
         long[] M = new long[sum + 1];
-        int[] V = new int[sum + 1];
+        int[] V = new int[sum + 1];/*
         stampOptions.sort((a, b) -> {
             if (a == 1) return a.compareTo(b);
             if (b == 1) return b.compareTo(a);
@@ -20,18 +20,46 @@ public class Stamps {
                 return b.compareTo(a);
             }
             return b.compareTo(a);
-        });
+        });*/
+        List<Integer> temp = new ArrayList<>();
+        List<Integer> temp2 = new ArrayList<>();
+        boolean swtch = true;
+        for (Integer s: stampOptions) {
+            if (s % 10 == 0 || s == 1) {
+                temp2.add(s);
+            }
+            else {
+                if (swtch) {
+                    temp.add(s);
+                } else {
+                    temp.add(0, s);
+                }
+                swtch = !swtch;
+            }
+        }
+        stampOptions = new ArrayList<>(temp);
+        stampOptions.addAll(temp2);
         //System.out.println(stampOptions);
         for (int i = 1 ; i <= sum; i++) {
             M[i] = ((long) Integer.MAX_VALUE);
-            for (Integer stampOption1 : stampOptions) {
-                int stampOption = stampOption1;
+            for (Integer stampOption : stampOptions) {
                 if (i >= stampOption && M[i] > M[i - stampOption] + 1) {
                     M[i] = M[i - stampOption] + 1;
                     V[i] = stampOption;
                 }
             }
+        }/*
+        StringBuilder is = new StringBuilder();
+        StringBuilder MS = new StringBuilder();
+        StringBuilder VS = new StringBuilder();
+        for (int i = 0; i <= sum; i++) {
+            is.append(i).append("\t");
+            MS.append(M[i]).append("\t");
+            VS.append(V[i]).append("\t");
         }
+        System.out.println(is);
+        System.out.println(MS);
+        System.out.println(VS);*/
         List<Integer> result = new ArrayList<>();
         while (sum > 0) {
             result.add(V[sum]);
