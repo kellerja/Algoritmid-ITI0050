@@ -11,11 +11,12 @@ public class Stamps {
         long[] M = new long[sum + 1];
         int[] V = new int[sum + 1];
         stampOptions.sort((a, b) -> {
-            //if (a == 1) return a.compareTo(b);
-            //if (b == 1) return b.compareTo(a);
             if (a % 10 == 0 && b % 10 != 0) return a.compareTo(b);
             if (a % 10 == 0 && b % 10 == 0) return b.compareTo(a);
-            if (a % 10 != 0 && b % 10 != 0) return a.compareTo(b);
+            if (a % 10 != 0 && b % 10 != 0) {
+                if (a % 2 == 0) return a.compareTo(b);
+                return b.compareTo(a);
+            }
             return b.compareTo(a);
         });
         //System.out.println(stampOptions);
