@@ -11,6 +11,8 @@ public class Stamps {
         long[] M = new long[sum + 1];
         int[] V = new int[sum + 1];
         stampOptions.sort((a, b) -> {
+            if (a == 1) return a.compareTo(b);
+            if (b == 1) return b.compareTo(a);
             if (a % 10 == 0 && b % 10 != 0) return a.compareTo(b);
             if (a % 10 == 0 && b % 10 == 0) return b.compareTo(a);
             if (a % 10 != 0 && b % 10 != 0) {
@@ -19,7 +21,7 @@ public class Stamps {
             }
             return b.compareTo(a);
         });
-        System.out.println(stampOptions);
+        //System.out.println(stampOptions);
         for (int i = 1 ; i <= sum; i++) {
             M[i] = ((long) Integer.MAX_VALUE);
             for (Integer stampOption1 : stampOptions) {
@@ -30,17 +32,6 @@ public class Stamps {
                 }
             }
         }
-        StringBuilder is = new StringBuilder();
-        StringBuilder MS = new StringBuilder();
-        StringBuilder VS = new StringBuilder();
-        for (int i = 0; i <= sum; i++) {
-            is.append(i).append("\t");
-            MS.append(M[i]).append("\t");
-            VS.append(V[i]).append("\t");
-        }
-        System.out.println(is);
-        System.out.println(MS);
-        System.out.println(VS);
         List<Integer> result = new ArrayList<>();
         while (sum > 0) {
             result.add(V[sum]);
