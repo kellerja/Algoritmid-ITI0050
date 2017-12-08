@@ -6,39 +6,40 @@ import java.util.List;
 
 public class Stamps {
 
+    private static List<Boolean> primes = new ArrayList<>(Arrays.asList(false, true));
+    private static boolean isPrime(int toNumber) {
+        if (primes.size() - 1 < toNumber) {
+            for (int i = primes.size(); i <= toNumber; i++) {
+                boolean isPrime = true;
+                for (int j = 2; j < Math.sqrt(i); j++) {
+                    if (i % j == 0) {
+                        isPrime = false;
+                        break;
+                    }
+                }
+                primes.add(isPrime);
+            }
+        }
+        return primes.get(toNumber);
+    }
+
     public static List<Integer> findStamps(int sum, List<Integer> stampOptions) throws IllegalArgumentException {
         if (stampOptions.isEmpty()) throw new IllegalArgumentException("Must provide stampOptions");
         long[] M = new long[sum + 1];
-        int[] V = new int[sum + 1];/*
+        int[] V = new int[sum + 1];
         stampOptions.sort((a, b) -> {
             if (a == 1) return a.compareTo(b);
             if (b == 1) return b.compareTo(a);
             if (a % 10 == 0 && b % 10 != 0) return a.compareTo(b);
             if (a % 10 == 0 && b % 10 == 0) return b.compareTo(a);
             if (a % 10 != 0 && b % 10 != 0) {
+                if (isPrime(a) && !isPrime(b)) return -1;
+                if (isPrime(b) && !isPrime(a)) return 1;
                 if (a % 2 == 0 && b % 2 != 0) return a.compareTo(b);
                 return b.compareTo(a);
             }
             return b.compareTo(a);
-        });*/
-        List<Integer> temp = new ArrayList<>();
-        List<Integer> temp2 = new ArrayList<>();
-        boolean swtch = true;
-        for (Integer s: stampOptions) {
-            if (s % 10 == 0 || s == 1) {
-                temp2.add(s);
-            }
-            else {
-                if (swtch) {
-                    temp.add(s);
-                } else {
-                    temp.add(0, s);
-                }
-                swtch = !swtch;
-            }
-        }
-        stampOptions = new ArrayList<>(temp);
-        stampOptions.addAll(temp2);
+        });
         //System.out.println(stampOptions);
         for (int i = 1 ; i <= sum; i++) {
             M[i] = ((long) Integer.MAX_VALUE);
@@ -69,7 +70,7 @@ public class Stamps {
     }
 
     public static void main(String[] args) {
-        List<Integer> stamps = Arrays.asList(1, 10, 24, 30, 33, 36);
+        List<Integer> stamps = Arrays.asList(1, 7, 10, 24, 30, 33, 36);
         int sum = 100;
         System.out.println(findStamps(sum, stamps));
     }
