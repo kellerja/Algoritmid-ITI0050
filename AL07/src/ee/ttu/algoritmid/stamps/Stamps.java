@@ -8,6 +8,7 @@ import java.util.List;
 public class Stamps {
 
     public static List<Integer> findStamps(int sum, List<Integer> stampOptions) throws IllegalArgumentException {
+        if (stampOptions.isEmpty()) throw new IllegalArgumentException("Must provide stampOptions");
         long[] M = new long[sum + 1];
         int[] V = new int[sum + 1];
         stampOptions.sort(Comparator.reverseOrder());
@@ -20,19 +21,19 @@ public class Stamps {
                 }
             }
         }
-        System.out.println(Arrays.toString(M));
-        System.out.println(Arrays.toString(V));
         List<Integer> result = new ArrayList<>();
+        int weight = Integer.MAX_VALUE;
         while (sum > 0) {
             result.add(V[sum]);
             sum = sum - V[sum];
+            if (V[sum] % 10 == 0 || V[sum] == 1) weight -= 10;
         }
         return result;
     }
 
     public static void main(String[] args) {
         List<Integer> stamps = Arrays.asList(1, 10, 24, 30, 33, 36);
-        int sum = 100;
+        int sum = 1000000;
         System.out.println(findStamps(sum, stamps));
     }
 }
