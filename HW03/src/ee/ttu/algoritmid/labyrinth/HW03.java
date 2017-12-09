@@ -139,6 +139,7 @@ public class HW03 {
                     vnear = node;
                 }
             }
+            if (vnear.equals(getNodeId(end))) return touch;
             for (String node: graph.keySet()) {
                 if (node.equals(getNodeId(start))) continue;
                 Optional<Node> nodeFromVnearOptional = graph.get(vnear).stream().filter(n -> n.id.equals(node)).findAny();

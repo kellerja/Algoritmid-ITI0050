@@ -40,7 +40,7 @@ public class Stamps {
             }
             return b.compareTo(a);
         });
-        //System.out.println(stampOptions);
+        System.out.println(stampOptions);
         for (int i = 1 ; i <= sum; i++) {
             M[i] = ((long) Integer.MAX_VALUE);
             for (Integer stampOption : stampOptions) {
@@ -70,7 +70,7 @@ public class Stamps {
     }
 
     public static void main(String[] args) {
-        List<Integer> stamps = Arrays.asList(1, 7, 10, 24, 30, 33, 36);
+        List<Integer> stamps = Arrays.asList(36, 1, 2, 8, 17, 13, 7, 15, 21, 32, 24, 26, 33, 10, 27);
         int sum = 100;
         System.out.println(findStamps(sum, stamps));
     }
