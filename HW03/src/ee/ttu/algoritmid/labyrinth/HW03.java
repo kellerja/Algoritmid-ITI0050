@@ -198,8 +198,26 @@ public class HW03 {
 
     public static void main(String[] args) {
         try {
-            HW03 hw03 = new HW03("maze.txt");
-            System.out.println(hw03.solve());
+            HW03 hw03 = new HW03("publicSet/ns100b.maze");
+            long startTime = System.nanoTime();
+            List<String> path = hw03.solve();
+            long endTime = System.nanoTime();
+            System.out.println(path);
+            System.out.println("Num of nodes to travel: " + path.size());
+            int score = 0;
+            String node = hw03.getNodeId(hw03.start);
+            for (String direction: path) {
+                for (Node neighbour: hw03.graph.get(node)) {
+                    if (direction.equals(Objects.requireNonNull(Heading.movement(node, neighbour.id)).toString())) {
+                        if (neighbour.weight < 0) break;
+                        score += neighbour.weight;
+                        node = neighbour.id;
+                        break;
+                    }
+                }
+            }
+            System.out.println("Path distance: " + score);
+            System.out.println("Time " + ((endTime - startTime)/10e9) + " sec");
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
