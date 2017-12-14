@@ -6,85 +6,12 @@ import java.net.URISyntaxException;
 
 public class HW03 {
     private MazeRunner mazeRunner;
-    private Map<String, List<Node>> graph;
+    private Map<String, Node> graph;
     private AbstractMap.SimpleEntry<Integer, Integer> start;
     private AbstractMap.SimpleEntry<Integer, Integer> end;
 
     public HW03(String fileName) throws IOException, URISyntaxException {
         mazeRunner = new MazeRunner(fileName);
-    }
-
-    class Node {
-        private final int weight;
-        private final String id;
-
-        private Node(String id, int weight) {
-            this.weight = weight;
-            this.id = id;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + id + " " + weight + ")";
-        }
-
-        @Override
-        public int hashCode() {
-            return id.hashCode();
-        }
-    }
-
-    private enum Heading {
-        NORTH(0, -1, "N"),
-        EAST(1, 0, "E"),
-        SOUTH(0, 1, "S"),
-        WEST(-1, 0, "W");
-
-        private static Map<Heading, Heading> oppositeHeading;
-        static {
-            oppositeHeading = new HashMap<>();
-            oppositeHeading.put(NORTH, SOUTH);
-            oppositeHeading.put(EAST, WEST);
-            oppositeHeading.put(SOUTH, NORTH);
-            oppositeHeading.put(WEST, EAST);
-        }
-
-        private int deltaX;
-        private int deltaY;
-        private String heading;
-        Heading(int deltaX, int deltaY, String heading) {
-            this.deltaX = deltaX;
-            this.deltaY = deltaY;
-            this.heading = heading;
-        }
-
-        public static Heading movement(String fromNode, String toNode) {
-            int[] fromNodeCoordinates = Arrays.stream(fromNode.split("x")).mapToInt(Integer::parseInt).toArray();
-            int[] toNodeCoordinates = Arrays.stream(toNode.split("x")).mapToInt(Integer::parseInt).toArray();
-            int deltaX = toNodeCoordinates[0] - fromNodeCoordinates[0];
-            int deltaY = toNodeCoordinates[1] - fromNodeCoordinates[1];
-            switch (Integer.toString(deltaX) + Integer.toString(deltaY)) {
-                case ("0-1"): return NORTH;
-                case("10"): return EAST;
-                case ("01"): return SOUTH;
-                case ("-10"): return WEST;
-                default: return null;
-            }
-        }
-
-        AbstractMap.SimpleEntry<Integer, Integer> move(AbstractMap.SimpleEntry<Integer, Integer> pos) {
-            return new AbstractMap.SimpleEntry<>(pos.getKey() + deltaX, pos.getValue() + deltaY);
-        }
-
-        String getNodeString(List<List<String>> scanResult) {
-            return scanResult.get(1 + deltaY).get(1 + deltaX);
-        }
-
-        @Override
-        public String toString() {
-            return heading;
-        }
-
     }
 
     public MazeRunner getMazeRunner() {
@@ -100,7 +27,7 @@ public class HW03 {
     public List<String> solve() {
         start = mazeRunner.getPosition();
         graph = new HashMap<>();
-        graph.put(getNodeId(start), new ArrayList<>());
+        graph.put(getNodeId(start), new Node(getNodeId(start), 0));
         mapMaze();
         if (end == null) {
             return null;
@@ -126,8 +53,8 @@ public class HW03 {
             touch.put(node, getNodeId(start));
             distance.put(node, Integer.MAX_VALUE);
         }
-        for (Node neighbour: graph.get(getNodeId(start))) {
-            distance.put(neighbour.id, neighbour.weight);
+        for (Node neighbour: graph.get(getNodeId(start)).getNeighbours()) {
+            distance.put(neighbour.getId(), neighbour.getWeight());
         }
         String vnear = null;
         for (int i = 0; i < graph.size(); i++) {
@@ -142,13 +69,13 @@ public class HW03 {
             if (vnear.equals(getNodeId(end))) return touch;
             for (String node: graph.keySet()) {
                 if (node.equals(getNodeId(start))) continue;
-                Optional<Node> nodeFromVnearOptional = graph.get(vnear).stream().filter(n -> n.id.equals(node)).findAny();
+                Optional<Node> nodeFromVnearOptional = graph.get(vnear).getNeighbours().stream().filter(n -> n.getId().equals(node)).findAny();
                 if (!nodeFromVnearOptional.isPresent()) {
                     continue;
                 }
                 Node nodeFromVnear = nodeFromVnearOptional.get();
-                if (distance.get(vnear) + nodeFromVnear.weight < distance.get(nodeFromVnear.id)) {
-                    distance.put(node, distance.get(vnear) + nodeFromVnear.weight);
+                if (distance.get(vnear) + nodeFromVnear.getWeight() < distance.get(nodeFromVnear.getId())) {
+                    distance.put(node, distance.get(vnear) + nodeFromVnear.getWeight());
                     touch.put(node, vnear);
                 }
             }
@@ -160,27 +87,25 @@ public class HW03 {
     private void mapMaze() {
         List<List<String>> scanResult = mazeRunner.scanAsString();
         AbstractMap.SimpleEntry<Integer, Integer> position, nextPosition;
-        for (Heading heading: Heading.oppositeHeading.keySet()) {
-            if (!isNotVisited(heading) && !heading.getNodeString(scanResult).equals("#") && !heading.getNodeString(scanResult).equals("X")) {
+        for (Heading heading: Heading.getOppositeHeading().keySet()) {
+            if (isVisited(heading) && !heading.getNodeString(scanResult).equals("#")) {
                 position = mazeRunner.getPosition();
                 nextPosition = heading.move(position);
-                String nextNode = heading.getNodeString(scanResult);
-                if (nextNode.equals("T")) nextNode = "-2";
-                else if (nextNode.equals("B")) nextNode = "0";
-                graph.get(getNodeId(position)).add(new Node(getNodeId(nextPosition), Integer.parseInt(nextNode)));
+                graph.get(getNodeId(position)).getNeighbours().add(graph.get(getNodeId(nextPosition)));
             }
-            if (isNotVisited(heading) && mazeRunner.move(heading.toString())) {
+            if (!isVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
                 String weight = heading.getNodeString(scanResult);
                 if (heading.getNodeString(scanResult).equals("T")) {
                     end = position;
                     weight = "-2";
                 }
-                AbstractMap.SimpleEntry<Integer, Integer> prevPos = Heading.oppositeHeading.get(heading).move(position);
-                graph.put(getNodeId(position), new ArrayList<>());
-                graph.get(getNodeId(prevPos)).add(new Node(getNodeId(position), Integer.parseInt(weight)));
+                AbstractMap.SimpleEntry<Integer, Integer> prevPos = Heading.getOppositeHeading().get(heading).move(position);
+                Node node = new Node(getNodeId(position), Integer.parseInt(weight));
+                graph.put(getNodeId(position), node);
+                graph.get(getNodeId(prevPos)).getNeighbours().add(node);
                 mapMaze();
-                mazeRunner.move(Heading.oppositeHeading.get(heading).toString());
+                mazeRunner.move(Heading.getOppositeHeading().get(heading).toString());
             }
         }
     }
@@ -189,16 +114,16 @@ public class HW03 {
         return position.getKey() + "x" + position.getValue();
     }
 
-    private boolean isNotVisited(Heading heading) {
+    private boolean isVisited(Heading heading) {
         AbstractMap.SimpleEntry<Integer, Integer> newPos = heading.move(mazeRunner.getPosition());
         return newPos.getKey() < mazeRunner.getSize().getKey()
                 && newPos.getValue() < mazeRunner.getSize().getValue()
-                && !graph.containsKey(newPos.getKey() + "x" + newPos.getValue());
+                && graph.containsKey(getNodeId(newPos));
     }
 
     public static void main(String[] args) {
         try {
-            HW03 hw03 = new HW03("publicSet/ns100b.maze");
+            HW03 hw03 = new HW03("publicSet/ns20b.maze");
             long startTime = System.nanoTime();
             List<String> path = hw03.solve();
             long endTime = System.nanoTime();
@@ -207,11 +132,11 @@ public class HW03 {
             int score = 0;
             String node = hw03.getNodeId(hw03.start);
             for (String direction: path) {
-                for (Node neighbour: hw03.graph.get(node)) {
-                    if (direction.equals(Objects.requireNonNull(Heading.movement(node, neighbour.id)).toString())) {
-                        if (neighbour.weight < 0) break;
-                        score += neighbour.weight;
-                        node = neighbour.id;
+                for (Node neighbour: hw03.graph.get(node).getNeighbours()) {
+                    if (direction.equals(Objects.requireNonNull(Heading.movement(node, neighbour.getId())).toString())) {
+                        if (neighbour.getWeight() < 0) break;
+                        score += neighbour.getWeight();
+                        node = neighbour.getId();
                         break;
                     }
                 }
