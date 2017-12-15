@@ -3,8 +3,11 @@ package ee.ttu.algoritmid.labyrinth;
 import java.util.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 public class HW03 {
+    public static final int TREASURE = -2;
+    public static final int WALL = -1;
     private MazeRunner mazeRunner;
     private Map<String, Node> graph;
     private AbstractMap.SimpleEntry<Integer, Integer> start;
@@ -28,11 +31,14 @@ public class HW03 {
         start = mazeRunner.getPosition();
         graph = new HashMap<>();
         graph.put(getNodeId(start), new Node(getNodeId(start), 0));
-        mapMaze();
+        createNeighbourGraph();
         if (end == null) {
             return null;
         }
-        Map<String, String> touch = dijkstra();
+        return traverseDijkstraSolution(dijkstra());
+    }
+
+    private List<String> traverseDijkstraSolution(Map<String, String> touch) {
         LinkedList<String> solution = new LinkedList<>();
         String node = getNodeId(end);
         String temp;
@@ -66,10 +72,11 @@ public class HW03 {
                     vnear = node;
                 }
             }
-            if (vnear.equals(getNodeId(end))) return touch;
+            if (Objects.requireNonNull(vnear).equals(getNodeId(end))) return touch;
             for (String node: graph.keySet()) {
                 if (node.equals(getNodeId(start))) continue;
-                Optional<Node> nodeFromVnearOptional = graph.get(vnear).getNeighbours().stream().filter(n -> n.getId().equals(node)).findAny();
+                Optional<Node> nodeFromVnearOptional = graph.get(vnear).getNeighbours().stream()
+                        .filter(n -> n.getId().equals(node)).findAny();
                 if (!nodeFromVnearOptional.isPresent()) {
                     continue;
                 }
@@ -84,27 +91,25 @@ public class HW03 {
         return touch;
     }
 
-    private void mapMaze() {
-        List<List<String>> scanResult = mazeRunner.scanAsString();
+    private void createNeighbourGraph() {
+        List<List<Integer>> scanResult = mazeRunner.scan();
         AbstractMap.SimpleEntry<Integer, Integer> position, nextPosition;
         for (Heading heading: Heading.getOppositeHeading().keySet()) {
-            if (isVisited(heading) && !heading.getNodeString(scanResult).equals("#")) {
+            if (isVisited(heading) && heading.getNode(scanResult) != WALL) {
                 position = mazeRunner.getPosition();
                 nextPosition = heading.move(position);
                 graph.get(getNodeId(position)).getNeighbours().add(graph.get(getNodeId(nextPosition)));
-            }
-            if (!isVisited(heading) && mazeRunner.move(heading.toString())) {
+            }else if (!isVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
-                String weight = heading.getNodeString(scanResult);
-                if (heading.getNodeString(scanResult).equals("T")) {
+                Integer weight = heading.getNode(scanResult);
+                if (heading.getNode(scanResult) == TREASURE) {
                     end = position;
-                    weight = "-2";
                 }
                 AbstractMap.SimpleEntry<Integer, Integer> prevPos = Heading.getOppositeHeading().get(heading).move(position);
-                Node node = new Node(getNodeId(position), Integer.parseInt(weight));
+                Node node = new Node(getNodeId(position), weight);
                 graph.put(getNodeId(position), node);
                 graph.get(getNodeId(prevPos)).getNeighbours().add(node);
-                mapMaze();
+                createNeighbourGraph();
                 mazeRunner.move(Heading.getOppositeHeading().get(heading).toString());
             }
         }
@@ -115,34 +120,37 @@ public class HW03 {
     }
 
     private boolean isVisited(Heading heading) {
-        AbstractMap.SimpleEntry<Integer, Integer> newPos = heading.move(mazeRunner.getPosition());
-        return newPos.getKey() < mazeRunner.getSize().getKey()
-                && newPos.getValue() < mazeRunner.getSize().getValue()
-                && graph.containsKey(getNodeId(newPos));
+        AbstractMap.SimpleEntry<Integer, Integer> nextNodePos = heading.move(mazeRunner.getPosition());
+        return isInMaze(nextNodePos) && graph.containsKey(getNodeId(nextNodePos));
+    }
+
+    private boolean isInMaze(AbstractMap.SimpleEntry<Integer, Integer> nodePos) {
+        return nodePos.getKey() < mazeRunner.getSize().getKey()
+                && nodePos.getValue() < mazeRunner.getSize().getValue();
     }
 
     public static void main(String[] args) {
         try {
-            HW03 hw03 = new HW03("publicSet/ns20b.maze");
+            HW03 hw03 = new HW03("publicSet/nm100b.maze");
             long startTime = System.nanoTime();
             List<String> path = hw03.solve();
             long endTime = System.nanoTime();
             System.out.println(path);
             System.out.println("Num of nodes to travel: " + path.size());
-            int score = 0;
+            int distance = 0;
             String node = hw03.getNodeId(hw03.start);
             for (String direction: path) {
                 for (Node neighbour: hw03.graph.get(node).getNeighbours()) {
                     if (direction.equals(Objects.requireNonNull(Heading.movement(node, neighbour.getId())).toString())) {
                         if (neighbour.getWeight() < 0) break;
-                        score += neighbour.getWeight();
+                        distance += neighbour.getWeight();
                         node = neighbour.getId();
                         break;
                     }
                 }
             }
-            System.out.println("Path distance: " + score);
-            System.out.println("Time " + ((endTime - startTime)/10e9) + " sec");
+            System.out.println("Path distance: " + distance);
+            System.out.println("Time " + TimeUnit.NANOSECONDS.toSeconds(endTime - startTime) + " sec");
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }

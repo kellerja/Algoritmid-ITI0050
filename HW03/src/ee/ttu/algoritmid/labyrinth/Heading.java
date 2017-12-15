@@ -44,7 +44,7 @@ enum Heading {
         return new AbstractMap.SimpleEntry<>(pos.getKey() + deltaX, pos.getValue() + deltaY);
     }
 
-    String getNodeString(List<List<String>> scanResult) {
+    Integer getNode(List<List<Integer>> scanResult) {
         return scanResult.get(1 + deltaY).get(1 + deltaX);
     }
 
