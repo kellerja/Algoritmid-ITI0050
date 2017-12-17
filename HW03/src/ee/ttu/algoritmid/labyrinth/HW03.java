@@ -94,12 +94,12 @@ public class HW03 {
     private void createNeighbourGraph() {
         List<List<Integer>> scanResult = mazeRunner.scan();
         AbstractMap.SimpleEntry<Integer, Integer> position, nextPosition;
-        for (Heading heading: Heading.getOppositeHeading().keySet()) {
+        for (Heading heading: Heading.getHeadings()) {
             if (isVisited(heading) && heading.getNode(scanResult) != WALL) {
                 position = mazeRunner.getPosition();
                 nextPosition = heading.move(position);
                 graph.get(getNodeId(position)).getNeighbours().add(graph.get(getNodeId(nextPosition)));
-            }else if (!isVisited(heading) && mazeRunner.move(heading.toString())) {
+            } else if (!isVisited(heading) && mazeRunner.move(heading.toString())) {
                 position = mazeRunner.getPosition();
                 Integer weight = heading.getNode(scanResult);
                 if (heading.getNode(scanResult) == TREASURE) {
@@ -131,13 +131,14 @@ public class HW03 {
 
     public static void main(String[] args) {
         try {
-            HW03 hw03 = new HW03("publicSet/nm100b.maze");
+            HW03 hw03 = new HW03("maze.txt");
             long startTime = System.nanoTime();
             List<String> path = hw03.solve();
             long endTime = System.nanoTime();
             System.out.println(path);
             System.out.println("Num of nodes to travel: " + path.size());
             int distance = 0;
+            /* Distance calculation only for testing purposes */
             String node = hw03.getNodeId(hw03.start);
             for (String direction: path) {
                 for (Node neighbour: hw03.graph.get(node).getNeighbours()) {

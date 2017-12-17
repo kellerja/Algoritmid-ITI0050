@@ -48,6 +48,10 @@ enum Heading {
         return scanResult.get(1 + deltaY).get(1 + deltaX);
     }
 
+    public static Set<Heading> getHeadings() {
+        return oppositeHeading.keySet();
+    }
+
     public static Map<Heading, Heading> getOppositeHeading() {
         return oppositeHeading;
     }
