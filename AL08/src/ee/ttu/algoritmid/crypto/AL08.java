@@ -22,24 +22,21 @@ public class AL08 {
      * @return the value of a (the secret integer of Alice)
      */
     public Integer crackAlice() {
-        int a = 1;
         int p = session.getP();
         int g = session.getG();
-        String m = "qwerty";
         try {
-            String c = session.getEncrypted(m);
             int A = 1;
-            for (a = 1; a < p; a++) {
+            for (int a = 1; a < p; a++) {
                 A *= g;
                 A %= p;
-                if (session.getEncryptedWithCustomKey(m, A).equals(c)) {
+                if (session.getAlicesPublicKey() == A) {
                     return a;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return a;
+        return null;
     }
 
     /**
@@ -50,13 +47,16 @@ public class AL08 {
      */
     public Integer crackBob() {
         int p = session.getP();
-        int g = session.getG();
-        String m = "qwerty";
+        int A = session.getAlicesPublicKey();
         int a = crackAlice();
-        try {
-            String c = session.getEncrypted(m);
-        } catch (Exception e) {
-            e.printStackTrace();
+        int g = BigInteger.valueOf(session.getG()).pow(a).mod(BigInteger.valueOf(p)).intValue();
+        for (int b = 1; b < p; b++) {
+            A *= A;
+            A %= p;
+            g *= g;
+            g %= p;
+            System.out.println(a + " " + A + " " + p + " " + g + " " + b);
+            if (A == g) return b;
         }
         return null;
     }
@@ -65,5 +65,6 @@ public class AL08 {
         Session session = new Session(4, 3, 23, 5);
         AL08 al08 = new AL08(session);
         System.out.println(al08.crackAlice());
+        System.out.println(al08.crackBob());
     }
 }
