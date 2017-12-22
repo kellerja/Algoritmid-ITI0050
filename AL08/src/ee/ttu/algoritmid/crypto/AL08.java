@@ -1,5 +1,6 @@
 package ee.ttu.algoritmid.crypto;
 
+import javax.crypto.BadPaddingException;
 import java.math.BigInteger;
 
 public class AL08 {
@@ -48,21 +49,23 @@ public class AL08 {
     public Integer crackBob() {
         int p = session.getP();
         int A = session.getAlicesPublicKey();
-        int a = crackAlice();
-        int g = BigInteger.valueOf(session.getG()).pow(a).mod(BigInteger.valueOf(p)).intValue();
-        for (int b = 1; b < p; b++) {
-            A *= A;
-            A %= p;
-            g *= g;
-            g %= p;
-            System.out.println(a + " " + A + " " + p + " " + g + " " + b);
-            if (A == g) return b;
+        String m = "qwerty";
+        try {
+            String c = session.getEncrypted(m);
+            int s = 1;
+            for (int b = 1; b < p; b++) {
+                s *= A;
+                s %= p;
+                if (session.getEncryptedWithCustomKey(m, s).equals(c)) return b;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     public static void main(String[] args) {
-        Session session = new Session(4, 3, 23, 5);
+        Session session = new Session(6, 15, 5, 23);
         AL08 al08 = new AL08(session);
         System.out.println(al08.crackAlice());
         System.out.println(al08.crackBob());
